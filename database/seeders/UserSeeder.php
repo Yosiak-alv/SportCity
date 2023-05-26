@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     {
         User::factory(8)->create();
 
-        User::factory()->create([
+        $user= User::factory()->create([
             'dui' => '06357872-9',
             'name' => 'Josias Isaac',
             'lastname' => 'Romero',
@@ -23,5 +23,7 @@ class UserSeeder extends Seeder
             'email' => 'josias@example.com',
             'gym_id' => 1,
         ]);
+
+        $user->assignRole('administrator');
     }
 }
