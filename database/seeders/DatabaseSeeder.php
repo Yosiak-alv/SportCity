@@ -27,8 +27,9 @@ class DatabaseSeeder extends Seeder
             CardTransactionSeeder::class,
             CashTransactionSeeder::class,
             PurchaseSeeder::class,
-            PurchaseItemsSeeder::class
+            PurchaseItemsSeeder::class,
 
+            RoleAndPermissionSeeder::class
         ]);
     }
 }
