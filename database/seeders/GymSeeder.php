@@ -18,6 +18,8 @@ class GymSeeder extends Seeder
         Gym::factory(1)->create([
             'name' => 'SportCity',
             'address' => '10 Avenida Norte y 5 Cale Oriente, Barrio El Angel',
+            'email' => 'itteamsportcity@gmail.com',
+            'phone' => '2222 2222',
             'department_id' => $department->id, 
         ]);
     }

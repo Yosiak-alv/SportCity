@@ -21,6 +21,8 @@ class GymFactory extends Factory
         return [
             'name' => fake()->name(),
             'address' => fake()->address(),
+            'email' => fake()->unique()->email(),
+            'phone' => fake()->numerify('#### ####'),
             'department_id' => $department->id, 
         ];
     }
