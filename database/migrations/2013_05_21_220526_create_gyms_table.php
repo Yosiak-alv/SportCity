@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('address');
+            $table->string('email')->unique();
+            $table->string('phone');
             $table->foreignIdFor(Department::class)->nullable(false)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->softDeletes();
             $table->timestamps();
