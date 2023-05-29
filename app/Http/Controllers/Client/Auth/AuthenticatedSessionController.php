@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Client\Auth;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Client\Auth\LoginRequest;
+use App\Http\Requests\Client\Auth\LoginClientRequest;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginClientRequest $request): RedirectResponse
     {
         $request->authenticate();
 
