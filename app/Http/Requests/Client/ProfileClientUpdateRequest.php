@@ -22,9 +22,9 @@ class ProfileClientUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => 'regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/',
+            'phone' => 'min:8|regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/',
             'email' => ['email', 'max:255', Rule::unique('clients','email')->ignore($this->user()->id)],
-            'address' => ['string','max:5000'],
+            'address' => ['min:10','string','max:5000'],
         ];
     }
 }

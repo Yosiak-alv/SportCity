@@ -5,15 +5,23 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link,usePage } from '@inertiajs/vue3';
 import FlashMessage from '@/Components/Flash.vue';
 import Banner from '@/Components/Banner.vue';
 const showingNavigationDropdown = ref(false);
+
+const permissions = ref(usePage().props.auth.user_role_permissions);
+
+const getPermission = (data) => {
+    return permissions.value.find((permission) =>
+        permission.toLowerCase().includes(data)
+    ) ? true : false;
+}
 </script>
 
 <template>
     <div>
-        <Banner />
+       <!--  <Banner /> -->
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <!-- Primary Navigation Menu -->
@@ -33,6 +41,9 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
+                                </NavLink>
+                                <NavLink :href="route('clients.index')" :active="route().current('clients.index')" v-if="getPermission('view clients')">
+                                    Clients
                                 </NavLink>
                             </div>
                         </div>

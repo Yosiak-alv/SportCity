@@ -33,11 +33,18 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user()?->makeHidden(['remember_token'])->load('gym'),
+                'user_role_permissions' => $request->user()?->getPermissionsViaRoles()->pluck('name'),
             ],
-            'flash' => [
-                'type' => fn() => $request->session()->get('type'),
-                'message' => fn() => $request->session()->get('message'),
-                'level' => fn() => $request->session()->get('level')
+            /*  'flash' => function () use ($request) {
+                return [
+                    'type' => $request->session()->get('type'),
+                    'message' => $request->session()->get('message'),
+                    'level'  => $request->session()->get('level') 
+                ];
+            }, */
+            'flash' =>[
+                'level' => fn() => $request->session()->get('level'),
+                'message' => fn() => $request->session()->get('message'),      
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

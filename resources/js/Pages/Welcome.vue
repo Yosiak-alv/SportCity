@@ -24,9 +24,10 @@ const form = useForm({
 <template>
     <Head title="Welcome" />
 
-   <!--  <Banner/> -->
+   
         
     <nav class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600">
+       <!--  <Banner /> -->
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <Link href="#init" class="flex items-center">
                 <img src="/storage/img/homepage/Logo.png" class="h-8 mr-3" alt="SportCity Logo">
@@ -426,18 +427,3 @@ const form = useForm({
     <flash-message />
             
 </template>
-
-<style>
-    ::-moz-selection { /* Code for Firefox */
-        color: white;
-        background: rgb(76, 175, 80) ;
-    }
-
-    ::selection {
-        color: white;
-        background: rgb(76, 175, 80) ;
-    }
-    html{
-        scroll-behavior: smooth;
-    }
-</style>
