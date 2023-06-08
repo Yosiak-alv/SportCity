@@ -21,4 +21,18 @@
     <body class="font-sans antialiased">
         @inertia
     </body>
+    <style>
+        ::-moz-selection { /* Code for Firefox */
+            color: white;
+            background: rgb(76, 175, 80) ;
+        }
+    
+        ::selection {
+            color: white;
+            background: rgb(76, 175, 80) ;
+        }
+        html{
+            scroll-behavior: smooth;
+        }
+    </style>
 </html>
