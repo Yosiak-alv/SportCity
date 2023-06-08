@@ -37,11 +37,11 @@ Route::middleware('auth')->group(function () {
     //Route::delete('clients/{client}/forceDelete',[UserClientController::class,'forceDelete'])->name('clients.forceDelete');
 
     //USER - CLIENT_SYSTEM
-    Route::get('clients/{client}/system',[ClientSystemController::class,'create'])->name('clients.create_system');
-    Route::post('clients/{client}/system',[ClientSystemController::class,'store'])->name('clients.store_system');
-    Route::get('clients/{client}/edit/system',[ClientSystemController::class,'edit'])->name('clients.edit_system');
-    Route::patch('clients/{client}/edit/system',[ClientSystemController::class,'update'])->name('clients.update_system');
-    Route::delete('clients/{client}/destroy/system',[ClientSystemController::class,'destroy'])->name('clients.destroy_system');
+    Route::get('clients/{client}/system',[UserClientController::class,'createSystem'])->name('clients.create_system');
+    Route::post('clients/{client}/system',[UserClientController::class,'storeSystem'])->name('clients.store_system');
+    Route::get('clients/{client}/edit/system',[UserClientController::class,'editSystem'])->name('clients.edit_system');
+    Route::patch('clients/{client}/edit/system',[UserClientController::class,'updateSystem'])->name('clients.update_system');
+    Route::delete('clients/{client}/destroy/system',[UserClientController::class,'destroySystem'])->name('clients.destroy_system');
 
 });
 
