@@ -4,7 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\ClientCreateEditRequest;
+use App\Http\Requests\User\ClientSystemCreateEditRequest;
 use App\Models\Gym;
+use App\Models\System;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Client;
@@ -22,6 +24,11 @@ class UserClientController extends Controller
         return array_merge(parent::resourceAbilityMap(), [
             // method in Controller => method in Policy
             'restore' => 'restore',
+            'createSystem' => 'createSystem',
+            'storeSystem' => 'createSystem',
+            'editSystem' => 'updateSystem',
+            'updateSystem' => 'updateSystem',
+            'destroySystem' => 'deleteSystem'
         ]);
     }
 
@@ -126,6 +133,65 @@ class UserClientController extends Controller
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
             'message' => 'Client Restored Succesfully!'
+        ]);
+    }
+
+    //CLIENT - SYSTEM
+    public function createSystem(Client $client)
+    {
+        return Inertia::render('User/User_Client/Partials/Client_System/CreateEditClientSystem',[
+            'systems' => System::all(),
+            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
+        ]);
+    }
+    public function storeSystem(ClientSystemCreateEditRequest $request, Client $client)
+    {
+        $conditions = collect([]);
+        
+        foreach ($request->conditions() as $index => $condition) {
+            if ($request->validatedSystemsId()->contains($index)) {
+                $conditions->put($index, [ 'condition' => $condition ]);
+            }
+        }
+        $client->system_client()->sync($conditions);
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client System Created Succesfully!'
+        ]);
+    }
+    public function editSystem(Client $client)
+    {
+        return Inertia::render('User/User_Client/Partials/Client_System/CreateEditClientSystem',[
+            'systems' => System::all(),
+            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
+            'selected_client_systems' => $client->system_client()->select('id')->get()->pluck('id'),
+            'select_client_system_conditions' => $client->system_client()->select(['system_id','condition'])->get()->pluck('condition','system_id'),
+        ]);
+    }
+    public function updateSystem(ClientSystemCreateEditRequest $request, Client $client)
+    {
+        $conditions = collect([]);
+        
+        foreach ($request->conditions() as $index => $condition) {
+            if ($request->validatedSystemsId()->contains($index)) {
+                $conditions->put($index, [ 'condition' => $condition ]);
+            }
+        }
+        $client->system_client()->sync($conditions);
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client System Updated Succesfully!'
+        ]);
+    }
+    public function destroySystem(Client $client)
+    {
+        $client->system_client()->sync([]);
+        
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client System Eliminated Succesfully!'
         ]);
     }
 
