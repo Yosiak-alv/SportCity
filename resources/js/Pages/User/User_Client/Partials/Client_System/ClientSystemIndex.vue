@@ -47,7 +47,7 @@ const getPermission = (data) => {
             </div>
             
         </div>
-        <div class="overflow-y-auto" style="height: 40rem;">
+        <div class="overflow-y-scroll" style="height: 40rem;" >
             <div class="text-base p-4" v-for="system in props.system_client">
                 <div class="w-full text-justify ">
                     <h3 class="inline text-3xl">
