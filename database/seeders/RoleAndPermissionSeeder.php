@@ -31,8 +31,12 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'edit client_system']);
         Permission::create(['name' => 'delete client_system']);
         
+        Permission::create(['name' => 'create client suscription']);
+        Permission::create(['name' => 'update client suscription']);
+        Permission::create(['name' => 'delete client suscription']);
+
         //Permission::create(['name' => 'restoreAll clients']); create client_system
-        //Permission::create(['name' => 'force-delete client']);
+        //Permission::create(['name' => 'force-delete client']); 
 
         Role::create(['name' => 'receptionist'])
         ->givePermissionTo(['view clients','show client','create client','edit client']);
