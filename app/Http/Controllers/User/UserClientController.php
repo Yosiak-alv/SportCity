@@ -5,7 +5,12 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\ClientCreateEditRequest;
 use App\Http\Requests\User\ClientSystemCreateEditRequest;
+use App\Http\Requests\User\CreateEditSuscriptionClient;
+use App\Models\CardTransaction;
+use App\Models\CashTransaction;
 use App\Models\Gym;
+use App\Models\Plan;
+use App\Models\Suscription;
 use App\Models\System;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -24,11 +29,18 @@ class UserClientController extends Controller
         return array_merge(parent::resourceAbilityMap(), [
             // method in Controller => method in Policy
             'restore' => 'restore',
+
             'createSystem' => 'createSystem',
             'storeSystem' => 'createSystem',
             'editSystem' => 'updateSystem',
             'updateSystem' => 'updateSystem',
-            'destroySystem' => 'deleteSystem'
+            'destroySystem' => 'deleteSystem',
+
+            'createSuscription' => 'createSuscription',
+            'storeSuscription' => 'createSuscription',
+            'editSuscription' => 'updateSuscription',
+            'updateSuscription' => 'updateSuscription',
+            'destroySuscription' => 'deleteSuscription'
         ]);
     }
 
@@ -85,7 +97,7 @@ class UserClientController extends Controller
     public function show(Client $client)
     {
         return Inertia::render('User/User_Client/Show',[
-            'client' => $client->load(['suscriptions.plan','purchases','system_client','attendances_training_sessions','gym.department'])
+            'client' => $client->load(['suscriptions.plan','purchases','system_client','attendances_training_sessions','gym.department','cardTransactions','cashTransactions'])
         ]);
     }
 
@@ -194,5 +206,122 @@ class UserClientController extends Controller
             'message' => 'Client System Eliminated Succesfully!'
         ]);
     }
+
+    //CLIENT - SUSCRIPTIONS
+
+    public function createSuscription(Client $client)
+    {
+        return Inertia::render('User/User_Client/Partials/Client_Suscription/CreateEditSuscription',[
+            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
+            'plans' => Plan::all(),
+        ]);
+    }
+    public function storeSuscription(CreateEditSuscriptionClient $request, Client $client)
+    {   
+        $request->merge([
+            'user_id' => request()->user()->id,
+        ]);
+        
+        if($request['plan_id'] == 1 || $request['plan_id'] == 2){ //mensualidad o pesas
+            $request->merge([
+                'ends_at' => \Carbon\Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
+            ]);
+        }else{ //entrenamiento del dia 
+            $request->merge([
+                'ends_at' => \Carbon\Carbon::now()->timezone('America/El_Salvador')->toDateTimeString(),
+            ]);
+        }
+        $suscription = Suscription::create([
+            'client_id' => $request['client_id'],
+            'plan_id' => $request['plan_id'],
+            'user_id' => $request['user_id'],
+            'transaction' => $request['transaction'],
+            'ends_at' => $request['ends_at']
+        ]);
+
+        if($request['transaction'] == 'Card'){
+            //card falta logica
+            $transaction = [
+                'client_id' => $request['client_id'],
+                'idTransaccion' => '',
+                'esReal' =>'',
+                'esAprobada' => '',
+                'codigoAutorizacion' => '',
+                'mensaje' => 'Pago Realizado con Exito, Para ' . Plan::where('id',$request['plan_id'])->pluck('name')->first(),
+                'formaPago' => 'Efectivo',
+                'monto' => Plan::where('id',$request['plan_id'])->pluck('price')->first(),
+                'suscription_id' => $suscription->id
+            ];
+            CardTransaction::created($transaction);
+        }
+        else{
+            //cash
+            $transaction = [
+                'client_id' => $request['client_id'],
+                'mensaje' => 'Pago Realizado con Exito, Para ' . Plan::where('id',$request['plan_id'])->pluck('name')->first(),
+                'formaPago' => 'Efectivo',
+                'monto' => Plan::where('id',$request['plan_id'])->pluck('price')->first(),
+                'suscription_id' => $suscription->id
+            ];
+            CashTransaction::create($transaction);
+        }
+        
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client Suscription Created Succesfully!'
+        ]);
+
+    }
+    public function editSuscription(Client $client,int $id)
+    {
+        return Inertia::render('User/User_Client/Partials/Client_Suscription/CreateEditSuscription',[
+            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
+            'plans' => Plan::all(),
+            'suscription' => Suscription::find($id)
+        ]);
+    }
+    public function updateSuscription(CreateEditSuscriptionClient $request, Client $client,int $id)
+    {
+        $suscription = Suscription::find($id);
+        $request->merge([
+            'user_id' => request()->user()->id,
+        ]);
+        if($request['plan_id'] == 1 || $request['plan_id'] == 2){ //mensualidad o pesas
+            $request->merge([
+                'ends_at' => \Carbon\Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
+            ]);
+        }else{ //entrenamiento del dia 
+            $request->merge([
+                'ends_at' => \Carbon\Carbon::now()->timezone('America/El_Salvador')->toDateTimeString(),
+            ]);
+        }
+
+        $suscription->update([
+            'client_id' => $request['client_id'],
+            'plan_id' => $request['plan_id'],
+            'user_id' => $request['user_id'],
+            'transaction' => $request['transaction'],
+            'ends_at' => $request['ends_at']
+        ]);
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client Suscription Updated Succesfully!'
+        ]);
+    }
+    public function destroySuscription(Client $client,int $id)
+    {
+        
+        //probarlo
+        Suscription::find($id)->delete();
+        (CardTransaction::where('suscription_id',$id)->first() ?  CardTransaction::where('suscription_id',$id)->delete() : CashTransaction::where('suscription_id',$id)->delete());
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client Suscription Eliminated Succesfully!'
+        ]);
+    }
+
 
 }
