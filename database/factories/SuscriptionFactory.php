@@ -26,6 +26,7 @@ class SuscriptionFactory extends Factory
             'client_id' => $client->id,
             'user_id' => $user->id,
             'plan_id' => $plan->id,
+            'transaction' => fake()->randomElement(['Cash','Card']),
             'ends_at' => fake()->date(),
         ];
     }

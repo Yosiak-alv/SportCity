@@ -77,5 +77,18 @@ class ClientPolicy
         return $user->hasPermissionTo('delete client_system');
     }
 
+    //CLIENT - SUSCRIPTION
 
+    public function createSuscription(User $user,Client $client): bool
+    {
+        return $user->hasPermissionTo('create client suscription');
+    }
+    public function updateSuscription(User $user,Client $client): bool
+    {
+        return $user->hasPermissionTo('update client suscription');
+    }
+    public function deleteSuscription(User $user,Client $client): bool
+    {
+        return $user->hasPermissionTo('delete client suscription');
+    }
 }

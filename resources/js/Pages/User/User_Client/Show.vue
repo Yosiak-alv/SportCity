@@ -11,7 +11,8 @@ import Paginate from '@/Components/Paginate.vue';
 import Modal from '@/Components/Modal.vue';
 import TrashedMessage from '@/Components/TrashedMessage.vue';
 
-import ClientSystemIndex from './Partials/Client_system/ClientSystemIndex.vue';
+import ClientSystemIndex from '@/Pages/User/User_Client/Partials/Client_system/ClientSystemIndex.vue';
+import ClientSuscriptionIndex from './Partials/Client_Suscription/ClientSuscriptionIndex.vue';
 const props = defineProps({
     client:{
         type:Object,
@@ -118,13 +119,22 @@ const getPermission = (data) => {
         <div class="max-w-7xl mx-auto text-center my-4 text-gray-900 dark:text-gray-100">
             <h2 class="text-3xl font-semibold">Relationships</h2>
         </div>
+        <div class="grid grid-flow-row-dense grid-cols-3 grid-rows-3 auto-cols-max">
+            <div class="row-span-3">
+                <ClientSystemIndex :clientId="props.client.id" :system_client="props.client.system_client" :deleted="props.client.deleted_at == null ? false:true"/>
+                
+            </div>
+            <div class="col-span-2">
+                <ClientSuscriptionIndex :clientId="props.client.id" :suscriptions="props.client.suscriptions" :deleted="props.client.deleted_at == null ? false:true"/>
+            </div>
+            <div class="col-span-2">
+            </div>
+            <div class="col-span-2">
+            </div>
 
-        <div class="grid grid-cols-3 mx-auto"> 
-            <!-- PARTIALS ... -->
-            <ClientSystemIndex :clientId="props.client.id" :system_client="props.client.system_client" :deleted="props.client.deleted_at == null ? false:true"/>
-            
-            
         </div>
+        
+        
     </AuthenticatedLayout>
     
 

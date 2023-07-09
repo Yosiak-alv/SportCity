@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('mensaje');
             $table->string('formaPago');
             $table->double('monto');
+            $table->integer('suscription_id')->nullable();
+            $table->integer('purchase_id')->nullable();
             $table->timestamps();
         });
     }

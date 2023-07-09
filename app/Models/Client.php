@@ -26,27 +26,27 @@ class Client extends Authenticatable
 
     public function cardTransactions() : HasMany
     {
-        return $this->hasMany(CardTransaction::class);
+        return $this->hasMany(CardTransaction::class)->orderBy('created_at','DESC');
     }
 
     public function cashTransactions(): HasMany
     {
-        return $this->hasMany(CashTransaction::class);
+        return $this->hasMany(CashTransaction::class)->orderBy('created_at','DESC');
     }
 
     public function attendances_training_sessions():BelongsToMany
     {
-        return $this->belongsToMany(TrainingSession::class,'attendances')->withPivot('attendance_date');
+        return $this->belongsToMany(TrainingSession::class,'attendances')->withPivot('attendance_date')->orderBy('attendance_date','DESC');
     }
 
     public function suscriptions():HasMany
     {
-        return $this->hasMany(Suscription::class);
+        return $this->hasMany(Suscription::class)->orderBy('created_at','DESC');
     }
 
     public function purchases():HasMany
     {
-        return $this->hasMany(Purchase::class);
+        return $this->hasMany(Purchase::class)->orderBy('created_at','DESC');
     }
     // entender que es !!
     // los items deleted devuelven un not found con y sin softdeletes

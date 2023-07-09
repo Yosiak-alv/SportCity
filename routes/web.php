@@ -43,6 +43,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('clients/{client}/edit/system',[UserClientController::class,'updateSystem'])->name('clients.update_system');
     Route::delete('clients/{client}/destroy/system',[UserClientController::class,'destroySystem'])->name('clients.destroy_system');
 
+    //USER - CLIENT SUSCRIPTION
+    Route::get('clients/{client}/suscription',[UserClientController::class,'createSuscription'])->name('clients.createSuscription');
+    Route::post('clients/{client}/suscription',[UserClientController::class,'storeSuscription'])->name('clients.storeSuscription');
+    Route::get('clients/{client}/edit/{id}/suscription',[UserClientController::class,'editSuscription'])->name('clients.editSuscription');
+    Route::patch('clients/{client}/edit/{id}/suscription',[UserClientController::class,'updateSuscription'])->name('clients.updateSuscription');
+    Route::delete('clients/{client}/{id}/suscription',[UserClientController::class,'destroySuscription'])->name('clients.destroySuscription');
+
+
 });
 
 

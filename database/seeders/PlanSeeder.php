@@ -13,6 +13,20 @@ class PlanSeeder extends Seeder
      */
     public function run(): void
     {
-        Plan::factory(3)->create();
+        $plans = [
+            'Membresia Mensual',
+            'Pesas',
+            'Entrenamiento del Dia'
+        ];
+        $prices = [
+            20.00,
+            12.00,
+            2.00
+        ];
+
+        Plan::factory(count($plans))->sequence(fn ($sequence)=> [
+            'name' => $plans[$sequence->index],
+            'price' => $prices[$sequence->index]
+        ])->create();
     }
 }
