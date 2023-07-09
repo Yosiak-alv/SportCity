@@ -18,7 +18,7 @@ class PlanFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'price_per_month' =>fake()->randomFloat(2,5,500),
+            'price' =>fake()->randomFloat(2,5,500),
         ];
     }
 }
