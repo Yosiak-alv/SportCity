@@ -49,7 +49,14 @@ Route::middleware('auth')->group(function () {
     Route::get('clients/{client}/edit/{id}/suscription',[UserClientController::class,'editSuscription'])->name('clients.editSuscription');
     Route::patch('clients/{client}/edit/{id}/suscription',[UserClientController::class,'updateSuscription'])->name('clients.updateSuscription');
     Route::delete('clients/{client}/{id}/suscription',[UserClientController::class,'destroySuscription'])->name('clients.destroySuscription');
+    Route::get('clients/{client}/suscription-invoice/{id}',[UserClientController::class,'suscriptionInvoice'])->name('clients.suscriptionInvoice');
 
+    // USER - CLIENT TRAINING SESSIONS
+    Route::get('clients/{client}/training-sessions/',[UserClientController::class , 'assignAttendance'])->name('clients.assignAttendanceTrainingSessions');
+    Route::post('clients/{client}/training-sessions/',[UserClientController::class , 'storeAttendance'])->name('clients.storeAttendanceTrainingSession');
+    Route::get('clients/{client}/training-sessions/{id}',[UserClientController::class , 'attendaceShow'])->name('clients.showAttendanceTrainingSession');
+    Route::patch('clients/{client}/training-sessions/{id}',[UserClientController::class , 'registerAttendanceDate'])->name('clients.registerAttendanceDate');
+    Route::delete('clients/{client}/training-sessions/delete/{id}',[UserClientController::class , 'destroyAttendace'])->name('clients.destroyAttendanceTrainingSession');
 
 });
 
