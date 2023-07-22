@@ -63,7 +63,7 @@ const getPermission = (data) => {
         </template>
 
         <div class="py-12">
-            <Card>
+            <Card class="max-w-7xl">
                 <header class="mb-3 p-2 ml-3 mt-3">
                     <div class="flex justify-between">
                         <div>
