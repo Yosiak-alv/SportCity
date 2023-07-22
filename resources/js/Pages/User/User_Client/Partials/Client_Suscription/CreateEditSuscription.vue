@@ -55,7 +55,7 @@ const update = () => {
         </template>
 
         <div class="py-12">
-            <Card>
+            <Card class="max-w-7xl">
                 <header class="p-6">
                     <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Client : {{props.client.name}}, {{props.client.lastname}}</h2>
 
