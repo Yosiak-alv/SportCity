@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->foreignIdFor(Client::class)->nullable(false)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignIdFor(TrainingSession::class)->nullable(false)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->timestamp('attendance_date');
+            $table->timestamp('attendance_date')->nullable();
         });
     }
 
