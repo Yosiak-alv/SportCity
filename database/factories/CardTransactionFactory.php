@@ -24,7 +24,7 @@ class CardTransactionFactory extends Factory
             'esReal' => fake()->boolean(),
             'esAprobada' => fake()->boolean(),
             'codigoAutorizacion' =>fake()->unique()->sha1(),
-            'mensaje' => fake()->paragraph(),
+            'mensaje' => fake()->paragraph(1),
             'formaPago' => fake()->word(),
             'monto' => fake()->randomFloat(2,0,500),
         ];
