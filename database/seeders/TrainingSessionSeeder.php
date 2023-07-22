@@ -20,7 +20,10 @@ class TrainingSessionSeeder extends Seeder
 
         TrainingSession::factory(15)->create()->each(function ($trainingSession) use ($exercises,$coaches){
             foreach($exercises->random(rand(1,$exercises->count())) as $exercise){
-                $trainingSession->training_sessions_exercises()->attach($exercise);
+                $trainingSession->training_sessions_exercises()->attach($exercise,[
+                    'repetitions' => random_int(0,50),
+                    'instructions' => fake()->paragraph()
+                ]); 
             }
 
             foreach($coaches->random(rand(1,$coaches->count())) as $coach){
