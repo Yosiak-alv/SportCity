@@ -1,11 +1,20 @@
 <script setup>
 import Card from '@/Components/Card.vue';
-import Table from '@/Components/Table.vue';
+//import Table from '@/Components/Table.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Modal from '@/Components/Modal.vue';
 import { Link, router, usePage} from '@inertiajs/vue3';
-import {ref, computed} from "vue";
+import {onMounted,ref, computed} from "vue";
+import $ from 'jquery';
+import DataTable from 'datatables.net-dt';
+ 
+onMounted(() => {
+    $('#datatable').DataTable({
+        /* pageLength : 5,
+        lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'Todos']], */
+    });
+});
 const props = defineProps({
     clientId:{
         type:Number,
@@ -53,7 +62,17 @@ const destroy = () => {
 
 
 </script>
-
+<style>
+    @import 'datatables.net-dt';
+    #datatable_length select {
+        background: rgb(31, 41, 55);
+        color: #eee;
+    }
+    .dataTables_length{
+        margin-bottom: 10px;
+    }
+    
+</style>
 <template>
      <Card class="mb-8" v-if="props.suscriptions.length != 0">
         <header class="flex justify-between margin-b mb-4 mt-4">
@@ -79,24 +98,19 @@ const destroy = () => {
         </header>
        
         <div class="p-2">
-            <Table class="mb-4 rounded-lg bg-gray-700 ">
-                <slot name="heading" >
-                    <th scope="col" class="px-6 py-3">
-                        Name Plan
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Price
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Transaction
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        End at
-                    </th>
-                    
-                </slot>
-                <slot>
-                    <tr v-for="suscription in props.suscriptions" :key="suscription.id" class="hover:bg-gray-500  bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+            <table id="datatable" class="mb-4 rounded-lg w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Name Plan</th>
+                        <th scope="col" class="px-6 py-3">Price</th>
+                        <th scope="col" class="px-6 py-3">Transaction</th>
+                        <th scope="col" class="px-6 py-3">End at</th>
+                        <th scope="col" class="px-6 py-3">Options</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="suscription in props.suscriptions" :key="suscription.id" class="hover:bg-gray-500  bg-white border-b dark:bg-gray-700 dark:border-gray-900">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white ">
                             {{suscription.plan.name}}
                         </th>
@@ -126,12 +140,24 @@ const destroy = () => {
                                     class="" @click="confirmSuscriptionDeletion(suscription.id)" v-if="!props.deleted && getPermission('delete client suscription')">
                                     Delete
                                 </DangerButton>
+                                <a
+                                    class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150"
+                                    :href="route('clients.suscriptionInvoice',{client:props.clientId,id:suscription.id})"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-invoice" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                        <path d="M9 7l1 0"></path>
+                                        <path d="M9 13l6 0"></path>
+                                        <path d="M13 17l2 0"></path>
+                                    </svg>
+                                </a>
                             </div>
                         </td>
-                        
                     </tr>
-                </slot>
-            </Table>
+                </tbody>
+            </table>
         </div>
     </Card>
     <Card v-else class="mb-8">
