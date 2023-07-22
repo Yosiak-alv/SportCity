@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Gym;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 
 
 /**
@@ -21,15 +22,15 @@ class TrainingSessionFactory extends Factory
     {
         $user = User::inRandomOrder()->limit(1)->first();
         $gym = Gym::inRandomOrder()->limit(1)->first();
+        $starts_at = Carbon::createFromTimeStamp(fake()->dateTimeBetween('-1 years', '+1 month')->getTimestamp());
         return [
             'name' =>fake()->word(),
             'description' => fake()->paragraph(),
             'duration' => fake()->randomFloat(2,0,60),
             'gym_id' => $gym->id,
             'user_id' => $user->id,
-            'starts_at' => fake()->date(),
-            'finish_at' => fake()->date(),
-            
+            'starts_at' => $starts_at->toDateTimeString(),
+            'finish_at' => $starts_at->addHours( fake()->numberBetween( 1, 8 ) )
         ];
     }
 }

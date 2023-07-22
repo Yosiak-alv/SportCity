@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CashTransaction;
 use App\Models\Purchase;
 use App\Models\PurchaseItems;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,7 +16,7 @@ class PurchaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Purchase::factory(25)->create()->each(function ($purchase) {
+        $purchases = Purchase::factory(25)->create()->each(function ($purchase) {
             $sub_total = 0;
             $item_count = 0;
 
@@ -35,6 +36,9 @@ class PurchaseSeeder extends Seeder
             $purchase->save();
         });
 
-        Purchase::factory(30)->create();
+        CashTransaction::factory(count($purchases))->sequence(fn($sqn)=>[
+            'client_id' => $purchases[$sqn->index]->client_id,
+            'purchase_id' => $purchases[$sqn->index]->id
+        ])->create();
     }
 }

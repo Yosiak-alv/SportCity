@@ -21,7 +21,7 @@ class CashTransactionFactory extends Factory
 
         return [
             'client_id' => $client->id,
-            'mensaje' => fake()->paragraph(),
+            'mensaje' => fake()->paragraph(1),
             'formaPago' => fake()->word(),
             'monto' => fake()->randomFloat(2,0,500),
         ];

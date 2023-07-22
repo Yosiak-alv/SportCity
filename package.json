@@ -18,6 +18,8 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "datatables.net-dt": "^1.13.5",
+        "jquery": "^3.7.0",
         "lodash": "^4.17.21"
     }
 }

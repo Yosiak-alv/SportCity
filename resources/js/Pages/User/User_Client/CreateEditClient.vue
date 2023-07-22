@@ -54,7 +54,7 @@ const update = (id) => {
         </template>
 
         <div class="py-12">
-            <Card class="mt-6 space-y-6">
+            <Card class="max-w-7xl mt-6 space-y-6">
                 <form @submit.prevent="(props.client == null ? store(): update(form.id))" class="grid grid-cols-2 gap-4 p-6">
                     <div>
                         <div>
