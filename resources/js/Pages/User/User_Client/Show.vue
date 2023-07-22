@@ -2,24 +2,42 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 import { Head,Link, router, usePage} from '@inertiajs/vue3';
-import {ref, computed} from "vue";
+import {ref, watch} from "vue";
+import {debounce} from "lodash";
 import Card from '@/Components/Card.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import Paginate from '@/Components/Paginate.vue';
 import Modal from '@/Components/Modal.vue';
 import TrashedMessage from '@/Components/TrashedMessage.vue';
 
 import ClientSystemIndex from '@/Pages/User/User_Client/Partials/Client_system/ClientSystemIndex.vue';
 import ClientSuscriptionIndex from './Partials/Client_Suscription/ClientSuscriptionIndex.vue';
+import ClientTrainingSessionsIndex from './Partials/Client_TrainingSessions/ClientTrainingSessionsIndex.vue';
+import CardIndex from './Partials/Client_Transactions/CardIndex.vue';
+import CashIndex from './Partials/Client_Transactions/CashIndex.vue';
+
 const props = defineProps({
     client:{
         type:Object,
         required:true
 
+    },
+    client_attendance_training_sessions:{
+        type:Object,
+        required:true
+    },
+    filters:{
+        type:Object,
+        required:true
     }
 });
+
+/* const search = ref(props.filters.search);
+//search Handling
+watch(search, debounce((value) => {
+    router.get(route('clients.show',{id:client.id}), {search:value}, { preserveState:true , replace:true });
+},500)); */
 
 const edit = (id) => {
     router.get(route('clients.edit',{id:id}))
@@ -71,7 +89,7 @@ const getPermission = (data) => {
         </div>
 
         <div class="py-12">
-            <Card>
+            <Card class="max-w-7xl">
                 <div class="flex justify-between items-center ">
                     <div class="flex justify-start items-center p-6">
                         <div class="ml-8">
@@ -117,8 +135,13 @@ const getPermission = (data) => {
         </div>
 
         <div class="max-w-7xl mx-auto text-center my-4 text-gray-900 dark:text-gray-100">
-            <h2 class="text-3xl font-semibold">Relationships</h2>
+            <h2 class="text-3xl font-semibold">Training Sessions</h2>
         </div>
+
+        <div class="py-9">
+            <ClientTrainingSessionsIndex  :clientId="props.client.id" :trainingSession="props.client_attendance_training_sessions" :filters="props.filters"/>
+        </div>
+
         <div class="grid grid-flow-row-dense grid-cols-3 grid-rows-3 auto-cols-max">
             <div class="row-span-3">
                 <ClientSystemIndex :clientId="props.client.id" :system_client="props.client.system_client" :deleted="props.client.deleted_at == null ? false:true"/>
@@ -133,8 +156,14 @@ const getPermission = (data) => {
             </div>
 
         </div>
-        
-        
+        <div class="flex flex-col">
+            <div v-if="getPermission('view client card transactions')">
+                <CardIndex class="" :cardTransactions="props.client.card_transactions"/>
+            </div>
+            <div v-if="getPermission('view client cash transactions')">
+                <CashIndex class="" :cashTransactions="props.client.cash_transactions"/>
+            </div>
+        </div>
     </AuthenticatedLayout>
     
 
