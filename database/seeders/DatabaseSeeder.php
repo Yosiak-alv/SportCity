@@ -26,8 +26,6 @@ class DatabaseSeeder extends Seeder
             TrainingSessionSeeder::class,
             ClientSeeder::class,
             SuscriptionSeeder::class,
-            CardTransactionSeeder::class,
-            CashTransactionSeeder::class,
             PurchaseSeeder::class,
             PurchaseItemsSeeder::class,
 
