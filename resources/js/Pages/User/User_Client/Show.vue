@@ -139,7 +139,7 @@ const getPermission = (data) => {
         </div>
 
         <div class="py-9">
-            <ClientTrainingSessionsIndex  :clientId="props.client.id" :trainingSession="props.client_attendance_training_sessions" :filters="props.filters"/>
+            <ClientTrainingSessionsIndex  :clientId="props.client.id" :trainingSession="props.client_attendance_training_sessions" :filters="props.filters" :deleted="props.client.deleted_at == null ? false:true"/>
         </div>
 
         <div class="grid grid-flow-row-dense grid-cols-3 grid-rows-3 auto-cols-max">
