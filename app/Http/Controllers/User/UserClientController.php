@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\ClientCreateEditRequest;
 use App\Http\Requests\User\ClientSystemCreateEditRequest;
+use App\Http\Requests\User\ClientTrainingSessionCreateRequest;
 use App\Http\Requests\User\CreateEditSuscriptionClient;
 use App\Models\CardTransaction;
 use App\Models\CashTransaction;
@@ -12,6 +13,8 @@ use App\Models\Gym;
 use App\Models\Plan;
 use App\Models\Suscription;
 use App\Models\System;
+use App\Models\TrainingSession;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Client;
@@ -40,7 +43,15 @@ class UserClientController extends Controller
             'storeSuscription' => 'createSuscription',
             'editSuscription' => 'updateSuscription',
             'updateSuscription' => 'updateSuscription',
-            'destroySuscription' => 'deleteSuscription'
+            'destroySuscription' => 'deleteSuscription',
+            'suscriptionInvoice' => 'suscriptionInvoice',
+
+            'assignAttendance' => 'assignAttendance',
+            'storeAttendance' => 'assignAttendance',
+            'attendaceShow' => 'attendaceShow',
+            'registerAttendanceDate' => 'registerAttendanceDate',
+            'destroyAttendace' => 'destroyAttendace',
+
         ]);
     }
 
@@ -97,7 +108,17 @@ class UserClientController extends Controller
     public function show(Client $client)
     {
         return Inertia::render('User/User_Client/Show',[
-            'client' => $client->load(['suscriptions.plan','purchases','system_client','attendances_training_sessions','gym.department','cardTransactions','cashTransactions'])
+            'client' => $client->load(['suscriptions.plan','purchases','system_client','gym.department','cardTransactions','cashTransactions']),
+            'client_attendance_training_sessions' => $client->attendances_training_sessions()->when(\Illuminate\Support\Facades\Request::input('search') ?? false, function($query , $search) {
+                $query->where(fn($query) =>
+                    $query->where('name','like','%'.$search.'%')
+                        ->orWhere('description','like','%'.$search.'%')
+                        ->orWhere('duration','like','%'.$search.'%')
+                        ->orWhere('starts_at','like','%'.$search.'%')
+                        ->orWhere('finish_at','like','%'.$search.'%')
+                );
+            })->paginate(8)->withQueryString(),
+            'filters' => \Illuminate\Support\Facades\Request::only('search'),
         ]);
     }
 
@@ -323,5 +344,80 @@ class UserClientController extends Controller
         ]);
     }
 
+    public function suscriptionInvoice(Client $client,int $id)
+    {
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('suscription-invoice',[
+            'client' => $client,
+            'transaction' => (CardTransaction::where('suscription_id',$id)->first() ?  CardTransaction::where('suscription_id',$id)->first() : CashTransaction::where('suscription_id',$id)->first()),
+            'suscription' => Suscription::find($id),
+        ]);
+
+        return $pdf->download('suscription-invoice.pdf');
+    }
+
+    // CLIENT TRAINING SESSIONS
+
+    public function assignAttendance(Client $client)
+    {
+        return Inertia::render('User/User_Client/Partials/Client_TrainingSessions/ClientTrainingSessionAssign',[
+            'training_sessions' => TrainingSession::whereDoesntHave('attendancesClients', function ($query) use($client){
+                return $query->where('client_id', $client->id);
+            })->get(),
+            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
+        ]); 
+    }
+    public function storeAttendance(Client $client,ClientTrainingSessionCreateRequest $request)
+    {
+        $client->attendances_training_sessions()->attach($request->validatedTrainingSessionsId());
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client Training Sessions Associated Succesfully!'
+        ]);
+    }
+    public function attendaceShow(Client $client,int $id)
+    {
+        $training_session = TrainingSession::find($id);
+        return Inertia::render('User/User_Client/Partials/Client_TrainingSessions/ClientTrainingSessionShow',[
+            'client_attendace_training_session' => $client->attendances_training_sessions()->where('training_session_id',$id)->first(),
+            'training_session_coaches' => $training_session->training_sessions_coaches,
+            'training_session_exercises' => $training_session->training_sessions_exercises,
+            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
+        ]);
+    }
+    public function registerAttendanceDate(Client $client,int $id, Request $request)
+    {
+        $attr = $request->validate([
+            'attendance_date' => ['required']
+        ]);
+        $training_session = TrainingSession::find($id);
+        $attendance_date = new \DateTime($attr['attendance_date']);
+        $starts_At = new \DateTime($training_session->starts_at);
+        $finish_At = new \DateTime($training_session->finish_at);
+
+        if((($attendance_date >= $starts_At)  && ($attendance_date <= $finish_At) ))
+        {
+            $client->attendances_training_sessions()->updateExistingPivot($id, ['attendance_date' => $attr['attendance_date']]);
+
+            return back()->with([
+                'level' => 'success',
+                'message' => 'Client Attendance Date Register Succesfully!'
+            ]);
+        }
+        return back()->with([
+            'level' => 'danger',
+            'message' => 'Client Attendance Date Must be in the Interval !!! '
+        ]);
+       
+    }
+    public function destroyAttendace(Client $client,int $id)
+    {
+        $client->attendances_training_sessions()->detach($id);
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client Training Session Diassocieted Succesfully!'
+        ]);
+    }
 
 }
