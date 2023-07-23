@@ -26,6 +26,11 @@ const props = defineProps({
     training_session_exercises:{
         type:Object,
         required:true
+    },
+    deleted:{
+        type:Boolean,
+        required:false,
+        default:false,
     }
 });
 
@@ -70,7 +75,13 @@ const registerAttendance = () => {
     });
 };
 
+const permissions = ref(usePage().props.auth.user_role_permissions);
 
+const getPermission = (data) => {
+    return permissions.value.find((permission) =>
+        permission.toLowerCase().includes(data)
+    ) ? true : false;
+}
 </script>
 
 <template>
@@ -84,7 +95,7 @@ const registerAttendance = () => {
             <Card class="max-w-7xl spacing-y-6">
                 <div class="flex justify-end">
                     <div class="mt-4 mr-4">
-                        <DangerButton @click="confirmTrainingSessionDeletion()">
+                        <DangerButton @click="confirmTrainingSessionDeletion()" v-if="props.deleted == false && getPermission('delete client training_session')">
                             Dissociate Training Session
                         </DangerButton>
                     </div>
@@ -101,7 +112,9 @@ const registerAttendance = () => {
                         <div v-if="props.client_attendace_training_session.pivot.attendance_date">
                             <span class="font-semibold mt-1 ">Attendace Date:</span> {{props.client_attendace_training_session.pivot.attendance_date}}
                         </div>
-                        <SecondaryButton @click="confirmAttendanceDateRegistration()" class="mt-2">
+                        <SecondaryButton @click="confirmAttendanceDateRegistration()" class="mt-2"
+                            v-if="props.deleted == false && getPermission('register client atendance_date training_session')"
+                        >
                             {{props.client_attendace_training_session.pivot.attendance_date ? 'Update Attendance' : 'Register Attendance'}}
                         </SecondaryButton>
 
