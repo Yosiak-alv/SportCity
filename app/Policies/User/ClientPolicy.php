@@ -13,7 +13,6 @@ class ClientPolicy
      */
     public function viewAny(User $user): bool
     {
-        //dd('hola');
         return $user->hasPermissionTo('view clients');
     }
 
@@ -39,7 +38,8 @@ class ClientPolicy
      */
     public function update(User $user, Client $client): bool
     {
-        return $user->hasPermissionTo('edit client');
+        
+        return ($client->trashed() ? false : $user->hasPermissionTo('edit client'));
     }
 
     /**
@@ -47,7 +47,7 @@ class ClientPolicy
      */
     public function delete(User $user, Client $client): bool
     {
-        return $user->hasPermissionTo('delete client');
+        return ($client->trashed() ? false : $user->hasPermissionTo('delete client'));
     }
 
     /**
@@ -62,33 +62,60 @@ class ClientPolicy
 
     public function createSystem(User $user ,Client $client): bool
     {   
-       if($user->hasPermissionTo('create client_system'))
-       {
-            return !$client->system_client()->exists();
-       }
+        if($client->trashed() == false)
+        {
+            if($user->hasPermissionTo('create client_system'))
+            {
+                return !$client->system_client()->exists();
+            }
+            return false;  
+        }
         return false;  
+       
     }
     public function updateSystem(User $user,Client $client): bool
     {
-        return $user->hasPermissionTo('edit client_system');
+        return ($client->trashed() ? false : $user->hasPermissionTo('edit client_system'));
     }
     public function deleteSystem(User $user,Client $client): bool
     {
-        return $user->hasPermissionTo('delete client_system');
+        return ($client->trashed() ? false :  $user->hasPermissionTo('delete client_system'));
     }
 
     //CLIENT - SUSCRIPTION
 
     public function createSuscription(User $user,Client $client): bool
     {
-        return $user->hasPermissionTo('create client suscription');
+        return ($client->trashed() ? false :  $user->hasPermissionTo('create client suscription'));
     }
     public function updateSuscription(User $user,Client $client): bool
     {
-        return $user->hasPermissionTo('update client suscription');
+        return ($client->trashed() ? false :  $user->hasPermissionTo('update client suscription'));
     }
     public function deleteSuscription(User $user,Client $client): bool
     {
-        return $user->hasPermissionTo('delete client suscription');
+        return ($client->trashed() ? false :  $user->hasPermissionTo('delete client suscription'));
+    }
+    public function suscriptionInvoice(User $user,Client $client): bool
+    {
+        return true;
+    }
+    //CLIENT TRAINING SESSIONS
+
+    public function assignAttendance(User $user,Client $client): bool
+    {
+        return ($client->trashed() ? false :  $user->hasPermissionTo('assign client training_sessions'));
+    }
+    public function attendaceShow(User $user,Client $client): bool
+    {
+        return true;
+    }
+    public function registerAttendanceDate(User $user,Client $client): bool
+    {
+        return ($client->trashed() ? false :  $user->hasPermissionTo('register client atendance_date training_session')); 
+    }
+    public function destroyAttendace(User $user,Client $client): bool
+    {
+        return ($client->trashed() ? false :  $user->hasPermissionTo('delete client training_session'));
     }
 }

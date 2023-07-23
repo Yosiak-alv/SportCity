@@ -29,8 +29,8 @@ class TrainingSessionFactory extends Factory
             'duration' => fake()->randomFloat(2,0,60),
             'gym_id' => $gym->id,
             'user_id' => $user->id,
-            'starts_at' => $starts_at->toDateTimeString(),
-            'finish_at' => $starts_at->addHours( fake()->numberBetween( 1, 8 ) )
+            'starts_at' => $starts_at->timezone('America/El_Salvador')->toDateTimeString(),
+            'finish_at' => $starts_at->timezone('America/El_Salvador')->addHours( fake()->numberBetween( 1, 8 ) )
         ];
     }
 }

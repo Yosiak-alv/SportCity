@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ContactUsMail;
 use App\Models\Gym;
+use App\Models\Plan;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +17,8 @@ class HomeController extends Controller
     {
         return Inertia::render('Welcome',[
             'canLogin' => Route::has('login'),
-            'gym' => Gym::select(['id','address','email','phone'])->where('id','1')->first()
+            'gym' => Gym::select(['id','address','email','phone'])->where('id','1')->first(),
+            'plans' => Plan::all()
         ]);
     }
 
