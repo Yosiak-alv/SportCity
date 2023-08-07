@@ -31,7 +31,7 @@ class PurchaseFactory extends Factory
             'sub_total' => $subTotal,
             'taxes' => $taxes,
             'total' => $subTotal + $taxes,
-            'finished' => true,
+            'canceled' => false,
         ];
     }
 }
