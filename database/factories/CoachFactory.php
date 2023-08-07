@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Gym;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,13 +17,15 @@ class CoachFactory extends Factory
      */
     public function definition(): array
     {
+        $gym = Gym::inRandomOrder()->limit(1)->first();
         return [
             'dui' => fake()->unique()->numerify('########-#'),
             'name' => fake()->name(),
             'lastname' => fake()->lastName(),
             'email' =>fake()->unique()->email(),
             'phone' => fake()->numerify('#### ####'),
-            'address' => fake()->address()
+            'address' => fake()->address(),
+            'gym_id' => $gym ->id
         ];
     }
 }
