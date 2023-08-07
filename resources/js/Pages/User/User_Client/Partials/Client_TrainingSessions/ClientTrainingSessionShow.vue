@@ -176,6 +176,9 @@ const getPermission = (data) => {
                                                 {{training_session_exercise.name }} X {{ training_session_exercise.pivot.repetitions }}
                                             </h3>
                                             <div class="my-1.5">
+                                                <span class="font-semibold ">Demonstration: </span> {{training_session_exercise.demonstration}}
+                                            </div>
+                                            <div class="my-1.5">
                                                 <span class="font-semibold ">Intructions: </span> {{training_session_exercise.pivot.instructions}}
                                             </div>
                                         </div>
