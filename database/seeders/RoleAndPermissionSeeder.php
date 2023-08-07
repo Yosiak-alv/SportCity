@@ -32,8 +32,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'delete client_system']);
         
         Permission::create(['name' => 'create client suscription']);
-        Permission::create(['name' => 'update client suscription']);
-        Permission::create(['name' => 'delete client suscription']);
+        Permission::create(['name' => 'cancel client suscription']);
 
         Permission::create(['name' => 'view client card transactions']);
         Permission::create(['name' => 'view client cash transactions']);
@@ -41,6 +40,9 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'assign client training_sessions']);
         Permission::create(['name' => 'register client atendance_date training_session']);
         Permission::create(['name' => 'delete client training_session']);
+
+        Permission::create(['name' => 'create client purchase']);
+        Permission::create(['name' => 'cancel client purchase']);
 
 
         //Permission::create(['name' => 'restoreAll clients']); create client_system

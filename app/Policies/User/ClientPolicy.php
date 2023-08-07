@@ -88,14 +88,15 @@ class ClientPolicy
     {
         return ($client->trashed() ? false :  $user->hasPermissionTo('create client suscription'));
     }
-    public function updateSuscription(User $user,Client $client): bool
+    public function showSuscription(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('update client suscription'));
+        return true;
     }
-    public function deleteSuscription(User $user,Client $client): bool
+    public function cancelSuscription(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('delete client suscription'));
+        return ($client->trashed() ? false :  $user->hasPermissionTo('cancel client suscription'));
     }
+    
     public function suscriptionInvoice(User $user,Client $client): bool
     {
         return true;
@@ -117,5 +118,20 @@ class ClientPolicy
     public function destroyAttendace(User $user,Client $client): bool
     {
         return ($client->trashed() ? false :  $user->hasPermissionTo('delete client training_session'));
+    }
+
+    //CLIENT - PURCHASE
+
+    public function createPurchase(User $user,Client $client): bool
+    {
+        return ($client->trashed() ? false :  $user->hasPermissionTo('create client purchase'));
+    }
+    public function showPurchase(User $user,Client $client): bool
+    {
+        return true;
+    }
+    public function cancelPurchase(User $user,Client $client): bool
+    {
+        return ($client->trashed() ? false :  $user->hasPermissionTo('cancel client purchase'));
     }
 }

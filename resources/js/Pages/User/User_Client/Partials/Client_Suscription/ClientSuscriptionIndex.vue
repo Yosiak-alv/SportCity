@@ -103,8 +103,8 @@ const destroy = () => {
                     <tr>
                         <th scope="col" class="px-6 py-3">Name Plan</th>
                         <th scope="col" class="px-6 py-3">Price</th>
-                        <th scope="col" class="px-6 py-3">Transaction</th>
                         <th scope="col" class="px-6 py-3">End at</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3">Options</th>
 
                     </tr>
@@ -119,24 +119,26 @@ const destroy = () => {
                             
                         </td>
                         <td class="px-6 py-4 ">
-                            {{suscription.transaction}}
-                            
-                        </td>
-                        <td class="px-6 py-4 ">
                             {{suscription.ends_at}}
                             
+                        </td> 
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="h-2.5 w-2.5 rounded-full mr-2" :class="suscription.canceled ? 'bg-red-500':'bg-green-500'"></div>{{suscription.canceled == false ? 'Active':'Canceled'}}
+                            </div>
                         </td>
+                        
                         <td class="px-6 py-4 ">
                             <div class="flex space-x-4">
                                 <Link 
                                 method="get" as="button"
                                 class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150"
-                                :href="route('clients.editSuscription',{client:props.clientId,id:suscription.id})"
-                                v-if="!props.deleted && getPermission('update client suscription')"
+                                :href="route('clients.showSuscription',{client:props.clientId,id:suscription.id})"
+                                
                                 >
-                                    Edit
+                                    Show
                                 </Link>
-                                <DangerButton 
+                                <!-- <DangerButton 
                                     class="" @click="confirmSuscriptionDeletion(suscription.id)" v-if="!props.deleted && getPermission('delete client suscription')">
                                     Delete
                                 </DangerButton>
@@ -152,7 +154,7 @@ const destroy = () => {
                                         <path d="M9 13l6 0"></path>
                                         <path d="M13 17l2 0"></path>
                                     </svg>
-                                </a>
+                                </a> -->
                             </div>
                         </td>
                     </tr>

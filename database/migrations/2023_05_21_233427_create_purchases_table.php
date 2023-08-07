@@ -20,7 +20,7 @@ return new class extends Migration
             $table->double('sub_total');
             $table->double('taxes');
             $table->double('total');
-            $table->boolean('finished');
+            $table->boolean('canceled')->default(0);
             $table->timestamps();
         });
     }

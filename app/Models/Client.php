@@ -15,6 +15,11 @@ use Laravel\Sanctum\HasApiTokens;
 class Client extends Authenticatable
 {
     use HasApiTokens, Notifiable, HasFactory, SoftDeletes;
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
     public function gym(): BelongsTo
     {
         return $this->belongsTo(Gym::class);

@@ -23,7 +23,6 @@ const shortDescript = (description) => {
 const form = useForm({
     client_id:props.client.id,
     training_session_id: [],
-    attendance_date: []
 });
 </script>
 

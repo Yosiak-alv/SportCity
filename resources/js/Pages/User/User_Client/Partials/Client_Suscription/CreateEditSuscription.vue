@@ -30,7 +30,7 @@ const form = useForm({
     id: props.suscription?.id ?? '',
     client_id: props.suscription?.client_id ?? props.client.id ,
     plan_id: props.suscription?.plan_id ?? '',
-    transaction: props.suscription?.transaction ?? '',
+    transaction: '',
     card_number : '',
     exp_date: '',
     cvv: '',

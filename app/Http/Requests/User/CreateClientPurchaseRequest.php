@@ -4,8 +4,7 @@ namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-
-class CreateEditSuscriptionClient extends FormRequest
+class CreateClientPurchaseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,13 +22,20 @@ class CreateEditSuscriptionClient extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => ['required','gt:0'],
-            'plan_id' => ['required','gt:0'],
-            'user_id' =>  ['gt:0','numeric'],
+            'product_id' => 'required|array',
+            'product_id.*' =>'numeric|gt:0|decimal:0|max:255', //representa la iteracion de cada una 
+            'quantity' => 'array',
+            'quantity*' => 'numeric|gt:0|decimal:0',
             'transaction' => ['required', 'string', 'in:Cash,Card',Rule::excludeIf($this->route('suscription') != null)],
-            'card_number' =>  ['string','nullable'],
-            'cvv' => ['numeric','gt:0','nullable'],
-            'exp_date' => ['string','nullable']
         ];
+    }
+    public function validatedProductIds()
+    {
+        return collect($this->only('product_id')['product_id']);
+    }
+
+    public function quantities(): array
+    {
+        return $this->only('quantity')['quantity'];
     }
 }

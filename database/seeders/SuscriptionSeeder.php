@@ -15,10 +15,11 @@ class SuscriptionSeeder extends Seeder
     public function run(): void
     {
         $suscriptions = Suscription::factory(20)->create();
-
+        $suscriptions = $suscriptions->load('plan');
         CashTransaction::factory(count($suscriptions))->sequence(fn($sqn)=>[
             'client_id' => $suscriptions[$sqn->index]->client_id,
-            'suscription_id' => $suscriptions[$sqn->index]->id
+            'suscription_id' => $suscriptions[$sqn->index]->id,
+            'monto' => $suscriptions[$sqn->index]->plan->price,
         ])->create();
     }
 }

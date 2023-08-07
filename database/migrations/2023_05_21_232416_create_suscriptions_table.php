@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Client::class)->nullable(false)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignIdFor(Plan::class)->nullable(false)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignIdFor(User::class)->nullable(false)->constrained()->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('transaction');
+            $table->boolean('canceled')->default(0);
             $table->timestamp('ends_at');
             $table->timestamps();
         });

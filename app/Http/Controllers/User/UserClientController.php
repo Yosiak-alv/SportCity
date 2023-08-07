@@ -6,11 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\ClientCreateEditRequest;
 use App\Http\Requests\User\ClientSystemCreateEditRequest;
 use App\Http\Requests\User\ClientTrainingSessionCreateRequest;
+use App\Http\Requests\User\CreateClientPurchaseRequest;
 use App\Http\Requests\User\CreateEditSuscriptionClient;
 use App\Models\CardTransaction;
 use App\Models\CashTransaction;
 use App\Models\Gym;
 use App\Models\Plan;
+use App\Models\Product;
+use App\Models\Purchase;
 use App\Models\Suscription;
 use App\Models\System;
 use App\Models\TrainingSession;
@@ -41,9 +44,8 @@ class UserClientController extends Controller
 
             'createSuscription' => 'createSuscription',
             'storeSuscription' => 'createSuscription',
-            'editSuscription' => 'updateSuscription',
-            'updateSuscription' => 'updateSuscription',
-            'destroySuscription' => 'deleteSuscription',
+            'showSuscription' => 'showSuscription',
+            'cancelSuscription' => 'cancelSuscription',
             'suscriptionInvoice' => 'suscriptionInvoice',
 
             'assignAttendance' => 'assignAttendance',
@@ -52,6 +54,9 @@ class UserClientController extends Controller
             'registerAttendanceDate' => 'registerAttendanceDate',
             'destroyAttendace' => 'destroyAttendace',
 
+            'createPurchase' => 'createPurchase',
+            'storePurchase' => 'createPurchase',
+            'showPurchase' => 'showPurchase'
         ]);
     }
 
@@ -245,18 +250,17 @@ class UserClientController extends Controller
         
         if($request['plan_id'] == 1 || $request['plan_id'] == 2){ //mensualidad o pesas
             $request->merge([
-                'ends_at' => \Carbon\Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
+                'ends_at' => Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
             ]);
         }else{ //entrenamiento del dia 
             $request->merge([
-                'ends_at' => \Carbon\Carbon::now()->timezone('America/El_Salvador')->toDateTimeString(),
+                'ends_at' => Carbon::now()->timezone('America/El_Salvador')->toDateTimeString(),
             ]);
         }
         $suscription = Suscription::create([
             'client_id' => $request['client_id'],
             'plan_id' => $request['plan_id'],
             'user_id' => $request['user_id'],
-            'transaction' => $request['transaction'],
             'ends_at' => $request['ends_at']
         ]);
 
@@ -294,53 +298,27 @@ class UserClientController extends Controller
         ]);
 
     }
-    public function editSuscription(Client $client,int $id)
+    public function showSuscription(Client $client,int $id)
     {
-        return Inertia::render('User/User_Client/Partials/Client_Suscription/CreateEditSuscription',[
-            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
-            'plans' => Plan::all(),
-            'suscription' => Suscription::find($id)
+        return Inertia::render('User/User_Client/Partials/Client_Suscription/ClientSuscriptionShow',[
+            'client' => $client->makeHidden(['genre','birth_date','height','weight','email_verified_at','created_at','updated_at']),
+            'suscription' => Suscription::with(['plan'])->find($id),
+            'transaction' => (CardTransaction::where('suscription_id',$id)->first() ?  CardTransaction::where('suscription_id',$id)->first() : CashTransaction::where('suscription_id',$id)->first()),
         ]);
     }
-    public function updateSuscription(CreateEditSuscriptionClient $request, Client $client,int $id)
+    public function cancelSuscription(Client $client,int $id)
     {
         $suscription = Suscription::find($id);
-        $request->merge([
-            'user_id' => request()->user()->id,
-        ]);
-        if($request['plan_id'] == 1 || $request['plan_id'] == 2){ //mensualidad o pesas
-            $request->merge([
-                'ends_at' => \Carbon\Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
-            ]);
-        }else{ //entrenamiento del dia 
-            $request->merge([
-                'ends_at' => \Carbon\Carbon::now()->timezone('America/El_Salvador')->toDateTimeString(),
-            ]);
-        }
+        $suscription->canceled = true;
+        $suscription->save();
 
-        $suscription->update([
-            'client_id' => $request['client_id'],
-            'plan_id' => $request['plan_id'],
-            'user_id' => $request['user_id'],
-            'transaction' => $request['transaction'],
-            'ends_at' => $request['ends_at']
-        ]);
+        $trasaction = (CardTransaction::where('suscription_id',$id)->first() ?  CardTransaction::where('suscription_id',$id)->first() : CashTransaction::where('suscription_id',$id)->first());
+        $trasaction->canceled = true;
+        $trasaction->save();
 
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
-            'message' => 'Client Suscription Updated Succesfully!'
-        ]);
-    }
-    public function destroySuscription(Client $client,int $id)
-    {
-        
-        //probarlo
-        Suscription::find($id)->delete();
-        (CardTransaction::where('suscription_id',$id)->first() ?  CardTransaction::where('suscription_id',$id)->delete() : CashTransaction::where('suscription_id',$id)->delete());
-
-        return redirect()->route('clients.show',$client->id)->with([
-            'level' => 'success',
-            'message' => 'Client Suscription Eliminated Succesfully!'
+            'message' => 'Client Suscription Canceled Succesfully!'
         ]);
     }
 
@@ -420,4 +398,103 @@ class UserClientController extends Controller
         ]);
     }
 
+
+    // CLIENT PURCHASE
+    public function createPurchase(Client $client)
+    {
+        return Inertia::render('User/User_Client/Partials/Client_Purchase/ClientPurchaseCreate',[
+            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
+            'products' => Product::select(['id','name','description','unit_price','quantity'])->where('gym_id',request()->user()->gym_id)->where('quantity' ,'>', 0)->get()
+        ]);
+    }
+
+    public function storePurchase(Client $client,CreateClientPurchaseRequest $request)
+    {
+        $quantities = collect([]);
+        $purchase =  Purchase::create([
+            'user_id' => request()->user()->id,
+            'client_id' => $client->id,
+            'item_count' => 0,
+            'sub_total' => 0,
+            'taxes'  => 0,
+            'total' => 0,
+            'canceled' => 0,
+        ]);
+
+        foreach ($request->quantities() as $index => $quantity) {
+            if ($request->validatedProductIds()->contains($index)) {
+                $quantities->push([ 
+                    'product_id' => $index,
+                    'quantity' => $quantity,
+                    'unit_price' => Product::select(['unit_price'])->where('id',$index)->value('unit_price'),
+                    'item_total' => number_format((float)((Product::select(['unit_price'])->where('id',$index)->value('unit_price')) * $quantity), 2, '.', ''),
+                ]);
+                $product = Product::find($index);
+                $product->quantity = $product->quantity - $quantity;
+                $product->save();
+            }
+        }
+        //funciono con createMany
+        $purchase->purchaseItems()->createMany($quantities->all());
+        
+        $purchase->item_count =  ($purchase->purchaseItems()->sum('quantity'));
+        $purchase->sub_total = round($purchase->purchaseItems()->sum('item_total'),2);
+        $purchase->taxes = round(($purchase->sub_total * .01), 2);
+        $purchase->total = round($purchase->sub_total + $purchase->taxes,2);
+        $purchase->save();
+
+        if($request['transaction'] == 'Card'){
+
+        }else{
+            //cash
+            $transaction = [
+                'client_id' => $client->id,
+                'mensaje' => 'Compra Realizada con Exito.',
+                'formaPago' => 'Efectivo',
+                'monto' => $purchase->total,
+                'purchase_id' => $purchase->id
+            ];
+            CashTransaction::create($transaction);
+        }
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client Purchase Created Succesfully!'
+        ]);
+       
+    }
+    public function showPurchase(Client $client,int $id)
+    {   
+        return Inertia::render('User/User_Client/Partials/Client_Purchase/ClientPurchaseShow',[
+            'client' => $client->makeHidden(['genre','birth_date','height','weight','email_verified_at','created_at','updated_at']),
+            'purchase' => Purchase::with(['purchaseItems.product'])->find($id), 
+            'transaction' => (CardTransaction::where('purchase_id',$id)->first() ?  CardTransaction::where('purchase_id',$id)->first() : CashTransaction::where('purchase_id',$id)->first()),
+        ]);
+    }
+    public function cancelPurchase(Client $client,int $id)
+    {   
+        //ya veremos 
+        $purchase = Purchase::find($id);
+        $purchase->canceled = true;
+        $purchase->save();
+       
+        $trasaction = (CardTransaction::where('purchase_id',$id)->first() ?  CardTransaction::where('purchase_id',$id)->first() : CashTransaction::where('purchase_id',$id)->first());
+        $trasaction->canceled = true;
+        $trasaction->save();
+
+        return redirect()->route('clients.show',$client->id)->with([
+            'level' => 'success',
+            'message' => 'Client Purchase Canceled Succesfully!'
+        ]);
+    }
+    public function purchaseInvoice(Client $client,int $id)
+    {
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('purchase-invoice',[
+            'client' => $client,
+            'transaction' => (CardTransaction::where('purchase_id',$id)->first() ?  CardTransaction::where('purchase_id',$id)->first() : CashTransaction::where('purchase_id',$id)->first()),
+            'purchase' => Purchase::with('purchaseItems.product')->find($id),
+        ]);
+
+        return $pdf->download('purchase-invoice.pdf');
+    }
 }

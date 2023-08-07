@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Gym;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,12 +17,14 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $gym = Gym::inRandomOrder()->limit(1)->first();
         return [
             'uuid' => \Illuminate\Support\Str::uuid(),
             'name' => fake()->word(),
             'description' => fake()->paragraph(),
             'unit_price' => fake()->randomFloat(2,5,500),
             'quantity' => fake()->randomDigitNotZero(),
+            'gym_id' => $gym ->id
             
         ];
     }

@@ -24,6 +24,7 @@ class CashTransactionFactory extends Factory
             'mensaje' => fake()->paragraph(1),
             'formaPago' => fake()->word(),
             'monto' => fake()->randomFloat(2,0,500),
+            'canceled' => false
         ];
     }
 }

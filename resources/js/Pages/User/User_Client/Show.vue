@@ -11,9 +11,10 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Modal from '@/Components/Modal.vue';
 import TrashedMessage from '@/Components/TrashedMessage.vue';
 
-import ClientSystemIndex from '@/Pages/User/User_Client/Partials/Client_system/ClientSystemIndex.vue';
+import ClientSystemIndex from './Partials/Client_System/ClientSystemIndex.vue';
 import ClientSuscriptionIndex from './Partials/Client_Suscription/ClientSuscriptionIndex.vue';
 import ClientTrainingSessionsIndex from './Partials/Client_TrainingSessions/ClientTrainingSessionsIndex.vue';
+import ClientPurchasesIndex from './Partials/Client_Purchase/ClientPurchasesIndex.vue';
 import CardIndex from './Partials/Client_Transactions/CardIndex.vue';
 import CashIndex from './Partials/Client_Transactions/CashIndex.vue';
 
@@ -78,7 +79,7 @@ const getPermission = (data) => {
 </script>
 
 <template>
-    <Head title="Clients" />
+    <Head title="Clients Show" />
 
     <AuthenticatedLayout>
         <template #header>
@@ -142,7 +143,21 @@ const getPermission = (data) => {
             <ClientTrainingSessionsIndex  :clientId="props.client.id" :trainingSession="props.client_attendance_training_sessions" :filters="props.filters" :deleted="props.client.deleted_at == null ? false:true"/>
         </div>
 
-        <div class="grid grid-flow-row-dense grid-cols-3 grid-rows-3 auto-cols-max">
+        <div class="grid grid-cols-3 gap-4">
+            <div class="row-span-2">
+                <ClientSystemIndex :clientId="props.client.id" :system_client="props.client.system_client" :deleted="props.client.deleted_at == null ? false:true"/>
+            </div>
+           
+            <div class="col-span-2">
+                <ClientSuscriptionIndex :clientId="props.client.id" :suscriptions="props.client.suscriptions" :deleted="props.client.deleted_at == null ? false:true"/>                
+            </div>
+
+            <div class="col-span-2">
+                <ClientPurchasesIndex :clientId="props.client.id" :purchases="props.client.purchases" :deleted="props.client.deleted_at == null ? false:true"/>
+            </div>
+        </div>
+
+        <!-- <div class="grid grid-flow-row-dense grid-cols-3 grid-rows-3 auto-cols-max">
             <div class="row-span-3">
                 <ClientSystemIndex :clientId="props.client.id" :system_client="props.client.system_client" :deleted="props.client.deleted_at == null ? false:true"/>
                 
@@ -151,11 +166,9 @@ const getPermission = (data) => {
                 <ClientSuscriptionIndex :clientId="props.client.id" :suscriptions="props.client.suscriptions" :deleted="props.client.deleted_at == null ? false:true"/>
             </div>
             <div class="col-span-2">
+                <ClientPurchasesIndex :clientId="props.client.id" :purchases="props.client.purchases" :deleted="props.client.deleted_at == null ? false:true"/>
             </div>
-            <div class="col-span-2">
-            </div>
-
-        </div>
+        </div> -->
         <div class="flex flex-col">
             <div v-if="getPermission('view client card transactions')">
                 <CardIndex class="" :cardTransactions="props.client.card_transactions"/>

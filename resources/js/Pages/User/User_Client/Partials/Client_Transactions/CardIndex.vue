@@ -53,6 +53,7 @@ const props = defineProps({
                         <th scope="col" class="px-6 py-3">Auth Code</th>
                         <th scope="col" class="px-6 py-3">Amount</th>
                         <th scope="col" class="px-6 py-3">Message</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3">Created At</th>
                         <th scope="col" class="px-6 py-3">Updated At</th>
 
@@ -73,12 +74,18 @@ const props = defineProps({
                         <td class="px-6 py-4 ">
                             {{cardTransaction.mensaje}}
                         </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="h-2.5 w-2.5 rounded-full mr-2" :class="cardTransaction.canceled ? 'bg-red-500':'bg-green-500'"></div>{{cardTransaction.canceled == false ? 'Completed':'Canceled'}}
+                            </div>
+                        </td>
                         <td class="px-6 py-4 ">
                             {{cardTransaction.created_at}}
                         </td>
                         <td class="px-6 py-4 ">
                             {{cardTransaction.updated_at}}
                         </td>
+                       
                     </tr>
                 </tbody>
             </table>

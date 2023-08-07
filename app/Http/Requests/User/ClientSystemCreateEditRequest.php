@@ -24,7 +24,7 @@ class ClientSystemCreateEditRequest extends FormRequest
         return [
             'system_id' => 'required|array',
             'system_id.*' =>'numeric|gt:0|decimal:0|max:255', //representa la iteracion de cada una 
-            'condition' => 'array',
+            'condition' => 'required|array',
             'condition*' => 'max:5000'
         ];
     }
