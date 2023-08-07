@@ -46,9 +46,8 @@ Route::middleware('auth')->group(function () {
     //USER - CLIENT SUSCRIPTION
     Route::get('clients/{client}/suscription',[UserClientController::class,'createSuscription'])->name('clients.createSuscription');
     Route::post('clients/{client}/suscription',[UserClientController::class,'storeSuscription'])->name('clients.storeSuscription');
-    Route::get('clients/{client}/edit/{id}/suscription',[UserClientController::class,'editSuscription'])->name('clients.editSuscription');
-    Route::patch('clients/{client}/edit/{id}/suscription',[UserClientController::class,'updateSuscription'])->name('clients.updateSuscription');
-    Route::delete('clients/{client}/{id}/suscription',[UserClientController::class,'destroySuscription'])->name('clients.destroySuscription');
+    Route::get('clients/{client}/edit/{id}/suscription',[UserClientController::class,'showSuscription'])->name('clients.showSuscription');
+    Route::patch('clients/{client}/edit/{id}/suscription',[UserClientController::class,'cancelSuscription'])->name('clients.cancelSuscription');
     Route::get('clients/{client}/suscription-invoice/{id}',[UserClientController::class,'suscriptionInvoice'])->name('clients.suscriptionInvoice');
 
     // USER - CLIENT TRAINING SESSIONS
@@ -58,6 +57,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('clients/{client}/training-sessions/{id}',[UserClientController::class , 'registerAttendanceDate'])->name('clients.registerAttendanceDate');
     Route::delete('clients/{client}/training-sessions/delete/{id}',[UserClientController::class , 'destroyAttendace'])->name('clients.destroyAttendanceTrainingSession');
 
+    // USER - CLIENT PURCHASES
+    Route::get('clients/{client}/purchase',[UserClientController::class , 'createPurchase'])->name('clients.createPurchase');
+    Route::post('clients/{client}/purchase',[UserClientController::class , 'storePurchase'])->name('clients.storePurchase');
+    Route::get('clients/{client}/purchase/{id}',[UserClientController::class , 'showPurchase'])->name('clients.showPurchase');
+    Route::patch('clients/{client}/purchase/{id}',[UserClientController::class , 'cancelPurchase'])->name('clients.cancelPurchase');
+    Route::get('clients/{client}/purchase-invoice/{id}',[UserClientController::class,'purchaseInvoice'])->name('clients.purchaseInvoice');
 });
 
 
