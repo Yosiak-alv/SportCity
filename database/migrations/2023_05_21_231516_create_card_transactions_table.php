@@ -24,6 +24,7 @@ return new class extends Migration
             $table->double('monto');
             $table->integer('suscription_id')->nullable();
             $table->integer('purchase_id')->nullable();
+            $table->boolean('canceled')->default(0);
             $table->timestamps();
         });
     }
