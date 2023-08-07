@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use App\Models\Gym;
 return new class extends Migration
 {
     /**
@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->double('unit_price');
             $table->integer('quantity');
+            $table->foreignIdFor(Gym::class)->nullable(false)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });
