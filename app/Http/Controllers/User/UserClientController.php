@@ -76,7 +76,7 @@ class UserClientController extends Controller
     {
         //dd(request()->user()->hasPermissionTo('view clients'));
         return Inertia::render('User/User_Client/Index',[ 
-            'clients' => Client::select(['id','dui','name','lastname','phone','deleted_at'])->where('gym_id',request()->user()->gym_id)->filter(request(['search','trashed']))
+            'clients' => Client::select(['id','dui','name','lastname','phone','deleted_at'])->latest('created_at')->where('gym_id',request()->user()->gym_id)->filter(request(['search','trashed']))
             ->paginate(5)->withQueryString(),
             'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed']),
         ]);
