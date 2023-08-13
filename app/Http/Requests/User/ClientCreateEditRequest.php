@@ -28,11 +28,11 @@ class ClientCreateEditRequest extends FormRequest
             'genre' => ['required','max:5'],
             'gym_id' => ['required','gt:0','numeric',],
             'birth_date' => ['required','date'],
-            'address' => ['min:10','string','max:5000'],
+            'address' => ['required','min:10','string','max:5000'],
             'phone' => ['required','regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/'],
             'height' => ['required','numeric', 'gt:0'],
             'weight' => ['required','numeric', 'gt:0'],
-            'email' => ['email', 'max:255', Rule::unique('clients','email')->ignore($this->client?->id)],
+            'email' => ['required','email', 'max:255', Rule::unique('clients','email')->ignore($this->client?->id)],
             //'password' => ['required','string','max:255',Rule::excludeIf($this->client != null)],
         ];
     }
