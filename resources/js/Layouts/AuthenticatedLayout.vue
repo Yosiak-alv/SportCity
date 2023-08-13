@@ -7,7 +7,7 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link,usePage } from '@inertiajs/vue3';
 import FlashMessage from '@/Components/Flash.vue';
-import Banner from '@/Components/Banner.vue';
+
 const showingNavigationDropdown = ref(false);
 
 const permissions = ref(usePage().props.auth.user_role_permissions);
@@ -44,6 +44,9 @@ const getPermission = (data) => {
                                 </NavLink>
                                 <NavLink :href="route('clients.index')" :active="route().current('clients.index')" v-if="getPermission('view clients')">
                                     Clients
+                                </NavLink>
+                                <NavLink :href="route('products.index')" :active="route().current('products.index')" v-if="getPermission('view products')">
+                                    Products
                                 </NavLink>
                             </div>
                         </div>
