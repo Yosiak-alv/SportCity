@@ -24,9 +24,9 @@ class CreateClientPurchaseRequest extends FormRequest
         return [
             'product_id' => 'required|array',
             'product_id.*' =>'numeric|gt:0|decimal:0|max:255', //representa la iteracion de cada una 
-            'quantity' => 'array',
+            'quantity' => 'required|array',
             'quantity*' => 'numeric|gt:0|decimal:0',
-            'transaction' => ['required', 'string', 'in:Cash,Card',Rule::excludeIf($this->route('suscription') != null)],
+            'transaction' => ['required', 'string', 'in:Cash,Card'],
         ];
     }
     public function validatedProductIds()
