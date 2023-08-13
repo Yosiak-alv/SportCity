@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\User\ClientSystemController;
+use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserClientController;
 use Illuminate\Foundation\Application;
@@ -63,6 +64,11 @@ Route::middleware('auth')->group(function () {
     Route::get('clients/{client}/purchase/{id}',[UserClientController::class , 'showPurchase'])->name('clients.showPurchase');
     Route::patch('clients/{client}/purchase/{id}',[UserClientController::class , 'cancelPurchase'])->name('clients.cancelPurchase');
     Route::get('clients/{client}/purchase-invoice/{id}',[UserClientController::class,'purchaseInvoice'])->name('clients.purchaseInvoice');
+
+    // USER - PRODUCTS
+    Route::resource('/products',ProductController::class);
+    Route::post('products/{product}/restore',[ProductController::class,'restore'])->name('products.restore');
+
 });
 
 
