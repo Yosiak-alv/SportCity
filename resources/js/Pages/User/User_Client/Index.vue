@@ -27,6 +27,14 @@ watch(form, debounce(() => {
     router.get('/clients', {search:form.search , trashed:form.trashed}, { preserveState:true , replace:true });
 },500));
 
+const permissions = ref(usePage().props.auth.user_role_permissions);
+
+const getPermission = (data) => {
+    return permissions.value.find((permission) =>
+        permission.toLowerCase().includes(data)
+    ) ? true : false;
+}
+
 </script>
 
 <template>
@@ -69,6 +77,7 @@ watch(form, debounce(() => {
                                     :href="route('clients.create')" 
                                     method="get" as="button"
                                     class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+                                    v-if="getPermission('create client')"
                                 >
                                     Create new Client
                                 </Link>
@@ -98,34 +107,57 @@ watch(form, debounce(() => {
                             <slot>
                                 <tr v-for="client in props.clients.data" :key="client.id" class="hover:bg-gray-500  bg-white border-b dark:bg-gray-900 dark:border-gray-700">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white ">
-                                        <Link class="flex items-center" :href="route('clients.show',{id:client.id})">
+                                        <div v-if="getPermission('show client')">
+                                            <Link class="flex items-center" :href="route('clients.show',{id:client.id})">
+                                                {{client.dui}}
+                                                <svg fill="none" v-if="client.deleted_at" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="flex-shrink-0 ml-2 w-3 h-3 fill-gray-400">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
+                                                </svg>
+                                            </Link>
+                                        </div>
+                                        <div v-else>
                                             {{client.dui}}
-                                            <svg fill="none" v-if="client.deleted_at" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="flex-shrink-0 ml-2 w-3 h-3 fill-gray-400">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
-                                            </svg>
-                                        </Link>
+                                        </div>
                                     </th>
                                     <td class="px-6 py-4">
-                                        <Link  :href="route('clients.show',{id:client.id})">
+                                        <div v-if="getPermission('show client')">
+                                            <Link  :href="route('clients.show',{id:client.id})">
+                                                {{client.name}}
+                                            </Link>
+                                        </div>
+                                        <div v-else>
                                             {{client.name}}
-                                        </Link>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <Link :href="route('clients.show',{id:client.id})">
+                                        <div v-if="getPermission('show client')">
+                                            <Link :href="route('clients.show',{id:client.id})">
+                                                {{client.lastname}}
+                                            </Link>
+                                        </div>
+                                        <div v-else>
                                             {{client.lastname}}
-                                        </Link>
+                                        </div>
+                                        
                                     </td>
                                     <td class="px-6 py-4 ">
-                                        <Link :href="route('clients.show',{id:client.id})">
+                                        <div v-if="getPermission('show client')">
+                                            <Link :href="route('clients.show',{id:client.id})">
+                                                {{client.phone}}
+                                            </Link>
+                                        </div>
+                                        <div v-else>
                                             {{client.phone}}
-                                        </Link>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <Link :href="route('clients.show',{id:client.id})">
-                                            <svg fill="none" class="block w-6 h-6 "  stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
-                                            </svg>
-                                        </Link>
+                                        <div v-if="getPermission('show client')">
+                                            <Link :href="route('clients.show',{id:client.id})">
+                                                <svg fill="none" class="block w-6 h-6 "  stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+                                                </svg>
+                                            </Link>
+                                        </div>
                                     </td>
                                 </tr>
                             </slot>
