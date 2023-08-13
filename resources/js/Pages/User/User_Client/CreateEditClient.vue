@@ -180,6 +180,7 @@ const update = (id) => {
                                 type="number"
                                 class="mt-1 block w-full"
                                 v-model="form.height"
+                                step="0.01"
                                 required
                                 
                             />
@@ -194,6 +195,7 @@ const update = (id) => {
                                 type="number"
                                 class="mt-1 block w-full"
                                 v-model="form.weight"
+                                step="0.01"
                                 required
                                 autocomplete="weight"
                             />
