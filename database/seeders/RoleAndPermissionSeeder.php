@@ -20,6 +20,7 @@ class RoleAndPermissionSeeder extends Seeder
        // app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
+        // CLIENTS 
         Permission::create(['name' => 'view clients']);
         Permission::create(['name' => 'show client']);
         Permission::create(['name' => 'create client']);
@@ -44,6 +45,13 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'create client purchase']);
         Permission::create(['name' => 'cancel client purchase']);
 
+        //PRODUCTS
+        Permission::create(['name' => 'view products']);
+        Permission::create(['name' => 'show product']);
+        Permission::create(['name' => 'create product']);
+        Permission::create(['name' => 'edit product']);
+        Permission::create(['name' => 'delete product']);
+        Permission::create(['name' => 'restore product']);
 
         //Permission::create(['name' => 'restoreAll clients']); create client_system
         //Permission::create(['name' => 'force-delete client']); 
@@ -52,7 +60,7 @@ class RoleAndPermissionSeeder extends Seeder
         ->givePermissionTo(['view clients','show client','create client','edit client']);
         
         Role::create(['name' => 'manager'])
-        ->givePermissionTo(['view clients', 'show client' ,'create client','edit client','delete client','restore client']);
+        ->givePermissionTo(['view clients' ,'create client','edit client','delete client','restore client']);
 
         Role::create(['name' => 'administrator'])
         ->givePermissionTo(Permission::all());
