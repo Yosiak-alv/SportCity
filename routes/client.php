@@ -64,11 +64,6 @@ Route::prefix('client')->group(static function() {
 
     Route::middleware('auth:client')->group(function() {
 
-       /*  Route::get('/dashboard', function () {
-            //dd('hola');
-            return Inertia::render('Client/ClientDashboard');
-        })->name('client.dashboard'); */
-
         Route::get('/dashboard',function () {
             return Inertia::render('Client/ClientDashboard');
         })->name('client.dashboard');
