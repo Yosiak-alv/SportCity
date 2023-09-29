@@ -30,10 +30,11 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user()?->makeHidden(['remember_token'])->load('gym'),
-                'user_role_permissions' => $request->user()?->getPermissionsViaRoles()->pluck('name'),
+                'user_role_permissions' => $request?->user()?->getPermissionsViaRoles()->pluck('name') ,
             ],
             /*  'flash' => function () use ($request) {
                 return [
