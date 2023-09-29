@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\User\ClientSystemController;
+use App\Http\Controllers\User\CoachController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserClientController;
@@ -68,6 +69,10 @@ Route::middleware('auth')->group(function () {
     // USER - PRODUCTS
     Route::resource('/products',ProductController::class);
     Route::post('products/{product}/restore',[ProductController::class,'restore'])->name('products.restore');
+
+
+    //USER -COACHES
+    Route::resource('/coaches',CoachController::class);
 
 });
 
