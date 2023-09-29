@@ -135,12 +135,9 @@ const getPermission = (data) => {
             </Card>
         </div>
 
-        <div class="max-w-7xl mx-auto text-center my-4 text-gray-900 dark:text-gray-100">
-            <h2 class="text-3xl font-semibold">Training Sessions</h2>
-        </div>
 
         <div class="py-9">
-            <ClientTrainingSessionsIndex  :clientId="props.client.id" :trainingSession="props.client_attendance_training_sessions" :filters="props.filters" :deleted="props.client.deleted_at == null ? false:true"/>
+            <ClientTrainingSessionsIndex  :clientId="props.client.id" :trainingSessions="props.client_attendance_training_sessions" :filters="props.filters" :deleted="props.client.deleted_at == null ? false:true"/>
         </div>
 
         <div class="grid grid-cols-3 gap-4">
