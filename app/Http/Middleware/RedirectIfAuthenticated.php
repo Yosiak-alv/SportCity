@@ -27,7 +27,10 @@ class RedirectIfAuthenticated
                 if($guard === 'client'){
                     $route = 'client.dashboard';
                 }
-                 return redirect()->route($route);
+                if($guard === 'coach'){
+                    $route = 'coach.dashboard';
+                }
+                return redirect()->route($route);
                 //return redirect(RouteServiceProvider::HOME);    
             }
         }

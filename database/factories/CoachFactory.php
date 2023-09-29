@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Gym;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Coach>
@@ -22,10 +23,14 @@ class CoachFactory extends Factory
             'dui' => fake()->unique()->numerify('########-#'),
             'name' => fake()->name(),
             'lastname' => fake()->lastName(),
-            'email' =>fake()->unique()->email(),
+            
             'phone' => fake()->numerify('#### ####'),
             'address' => fake()->address(),
-            'gym_id' => $gym ->id
+            'gym_id' => $gym ->id,
+            'email' => fake()->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
         ];
     }
 }
