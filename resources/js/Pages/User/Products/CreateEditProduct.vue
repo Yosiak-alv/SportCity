@@ -95,7 +95,7 @@ const update = (id) => {
                        
                     </div>
                     <div>
-                        <div class="">
+                        <div class="mt-1">
                             <InputLabel for="quantity" value="Quantity" />
 
                             <TextInput

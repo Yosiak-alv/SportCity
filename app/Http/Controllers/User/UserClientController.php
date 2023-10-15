@@ -8,7 +8,6 @@ use App\Http\Requests\User\ClientSystemCreateEditRequest;
 use App\Http\Requests\User\ClientTrainingSessionCreateRequest;
 use App\Http\Requests\User\CreateClientPurchaseRequest;
 use App\Http\Requests\User\CreateEditSuscriptionClient;
-use App\Models\CardTransaction;
 use App\Models\CashTransaction;
 use App\Models\Gym;
 use App\Models\Plan;
@@ -112,7 +111,7 @@ class UserClientController extends Controller
     public function show(Client $client)
     {
         return Inertia::render('User/User_Client/Show',[
-            'client' => $client->load(['suscriptions.plan','purchases','system_client','gym.department','cardTransactions','cashTransactions']),
+            'client' => $client->load(['suscriptions.plan','purchases','system_client','gym.department','cashTransactions']),
             'client_attendance_training_sessions' => $client->attendances_training_sessions()->when(\Illuminate\Support\Facades\Request::input('search') ?? false, function($query , $search) {
                 $query->where(fn($query) =>
                     $query->where('name','like','%'.$search.'%')
@@ -263,33 +262,15 @@ class UserClientController extends Controller
             'ends_at' => $request['ends_at']
         ]);
 
-        if($request['transaction'] == 'Card'){
-            //card falta logica
-            $transaction = [
-                'client_id' => $request['client_id'],
-                'idTransaccion' => '',
-                'esReal' =>'',
-                'esAprobada' => '',
-                'codigoAutorizacion' => '',
-                'mensaje' => 'Pago Realizado con Exito, Para ' . Plan::where('id',$request['plan_id'])->pluck('name')->first(),
-                'formaPago' => 'Efectivo',
-                'monto' => Plan::where('id',$request['plan_id'])->pluck('price')->first(),
-                'suscription_id' => $suscription->id
-            ];
-            CardTransaction::created($transaction);
-        }
-        else{
-            //cash
-            $transaction = [
-                'client_id' => $request['client_id'],
-                'mensaje' => 'Pago Realizado con Exito, Para ' . Plan::where('id',$request['plan_id'])->pluck('name')->first(),
-                'formaPago' => 'Efectivo',
-                'monto' => Plan::where('id',$request['plan_id'])->pluck('price')->first(),
-                'suscription_id' => $suscription->id
-            ];
-            CashTransaction::create($transaction);
-        }
-        
+        //cash
+        $transaction = [
+            'client_id' => $request['client_id'],
+            'mensaje' => 'Pago Realizado con Exito, Para ' . Plan::where('id',$request['plan_id'])->pluck('name')->first(),
+            'formaPago' => 'Efectivo',
+            'monto' => Plan::where('id',$request['plan_id'])->pluck('price')->first(),
+            'suscription_id' => $suscription->id
+        ];
+        CashTransaction::create($transaction);
 
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
@@ -302,7 +283,7 @@ class UserClientController extends Controller
         return Inertia::render('User/User_Client/Partials/Client_Suscription/ClientSuscriptionShow',[
             'client' => $client->makeHidden(['genre','birth_date','height','weight','email_verified_at','created_at','updated_at']),
             'suscription' => Suscription::with(['plan'])->find($id),
-            'transaction' => (CardTransaction::where('suscription_id',$id)->first() ?  CardTransaction::where('suscription_id',$id)->first() : CashTransaction::where('suscription_id',$id)->first()),
+            'transaction' => (CashTransaction::where('suscription_id',$id)->first()),
         ]);
     }
     public function cancelSuscription(Client $client,int $id)
@@ -311,7 +292,7 @@ class UserClientController extends Controller
         $suscription->canceled = true;
         $suscription->save();
 
-        $trasaction = (CardTransaction::where('suscription_id',$id)->first() ?  CardTransaction::where('suscription_id',$id)->first() : CashTransaction::where('suscription_id',$id)->first());
+        $trasaction = (CashTransaction::where('suscription_id',$id)->first());
         $trasaction->canceled = true;
         $trasaction->save();
 
@@ -325,7 +306,7 @@ class UserClientController extends Controller
     {
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('suscription-invoice',[
             'client' => $client,
-            'transaction' => (CardTransaction::where('suscription_id',$id)->first() ?  CardTransaction::where('suscription_id',$id)->first() : CashTransaction::where('suscription_id',$id)->first()),
+            'transaction' => (CashTransaction::where('suscription_id',$id)->first()),
             'suscription' => Suscription::find($id),
         ]);
 
@@ -442,19 +423,14 @@ class UserClientController extends Controller
         $purchase->total = round($purchase->sub_total + $purchase->taxes,2);
         $purchase->save();
 
-        if($request['transaction'] == 'Card'){
-
-        }else{
-            //cash
-            $transaction = [
-                'client_id' => $client->id,
-                'mensaje' => 'Compra Realizada con Exito.',
-                'formaPago' => 'Efectivo',
-                'monto' => $purchase->total,
-                'purchase_id' => $purchase->id
-            ];
-            CashTransaction::create($transaction);
-        }
+        $transaction = [
+            'client_id' => $client->id,
+            'mensaje' => 'Compra Realizada con Exito.',
+            'formaPago' => 'Efectivo',
+            'monto' => $purchase->total,
+            'purchase_id' => $purchase->id
+        ];
+        CashTransaction::create($transaction);
 
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
@@ -467,7 +443,7 @@ class UserClientController extends Controller
         return Inertia::render('User/User_Client/Partials/Client_Purchase/ClientPurchaseShow',[
             'client' => $client->makeHidden(['genre','birth_date','height','weight','email_verified_at','created_at','updated_at']),
             'purchase' => Purchase::with(['purchaseItems.product'])->find($id), 
-            'transaction' => (CardTransaction::where('purchase_id',$id)->first() ?  CardTransaction::where('purchase_id',$id)->first() : CashTransaction::where('purchase_id',$id)->first()),
+            'transaction' => (CashTransaction::where('purchase_id',$id)->first()),
         ]);
     }
     public function cancelPurchase(Client $client,int $id)
@@ -477,7 +453,7 @@ class UserClientController extends Controller
         $purchase->canceled = true;
         $purchase->save();
        
-        $trasaction = (CardTransaction::where('purchase_id',$id)->first() ?  CardTransaction::where('purchase_id',$id)->first() : CashTransaction::where('purchase_id',$id)->first());
+        $trasaction = (CashTransaction::where('purchase_id',$id)->first());
         $trasaction->canceled = true;
         $trasaction->save();
 
@@ -490,10 +466,9 @@ class UserClientController extends Controller
     {
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('purchase-invoice',[
             'client' => $client,
-            'transaction' => (CardTransaction::where('purchase_id',$id)->first() ?  CardTransaction::where('purchase_id',$id)->first() : CashTransaction::where('purchase_id',$id)->first()),
+            'transaction' => (CashTransaction::where('purchase_id',$id)->first()),
             'purchase' => Purchase::with('purchaseItems.product')->find($id),
         ]);
-
         return $pdf->download('purchase-invoice.pdf');
     }
 }

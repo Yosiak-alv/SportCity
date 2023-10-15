@@ -28,12 +28,6 @@ class Client extends Authenticatable
     {
         return $this->belongsToMany(System::class,'system_client')->withPivot('condition');
     }
-
-    public function cardTransactions() : HasMany
-    {
-        return $this->hasMany(CardTransaction::class)->orderBy('created_at','DESC');
-    }
-
     public function cashTransactions(): HasMany
     {
         return $this->hasMany(CashTransaction::class)->orderBy('created_at','DESC');

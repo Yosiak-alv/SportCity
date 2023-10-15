@@ -15,7 +15,7 @@ import ClientSystemIndex from './Partials/Client_System/ClientSystemIndex.vue';
 import ClientSuscriptionIndex from './Partials/Client_Suscription/ClientSuscriptionIndex.vue';
 import ClientTrainingSessionsIndex from './Partials/Client_TrainingSessions/ClientTrainingSessionsIndex.vue';
 import ClientPurchasesIndex from './Partials/Client_Purchase/ClientPurchasesIndex.vue';
-import CardIndex from './Partials/Client_Transactions/CardIndex.vue';
+
 import CashIndex from './Partials/Client_Transactions/CashIndex.vue';
 
 const props = defineProps({
@@ -167,9 +167,6 @@ const getPermission = (data) => {
             </div>
         </div> -->
         <div class="flex flex-col">
-            <div v-if="getPermission('view client card transactions')">
-                <CardIndex class="" :cardTransactions="props.client.card_transactions"/>
-            </div>
             <div v-if="getPermission('view client cash transactions')">
                 <CashIndex class="" :cashTransactions="props.client.cash_transactions"/>
             </div>

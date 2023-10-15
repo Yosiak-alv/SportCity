@@ -35,7 +35,6 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'create client suscription']);
         Permission::create(['name' => 'cancel client suscription']);
 
-        Permission::create(['name' => 'view client card transactions']);
         Permission::create(['name' => 'view client cash transactions']);
 
         Permission::create(['name' => 'assign client training_sessions']);
