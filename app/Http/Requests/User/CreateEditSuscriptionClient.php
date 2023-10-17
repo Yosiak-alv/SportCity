@@ -23,13 +23,9 @@ class CreateEditSuscriptionClient extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => ['required','gt:0'],
-            'plan_id' => ['required','gt:0'],
-            'user_id' =>  ['gt:0','numeric'],
-            'transaction' => ['required', 'string', 'in:Cash,Card'],
-            'card_number' =>  ['string','nullable'],
-            'cvv' => ['numeric','gt:0','nullable'],
-            'exp_date' => ['string','nullable']
+            'client_id' => ['required','gt:0','exists:clients,id'],
+            'plan_id' => ['required','gt:0','exists:plans,id'],
+            'user_id' =>  ['gt:0','numeric','exists:users,id'],
         ];
     }
 }

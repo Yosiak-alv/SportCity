@@ -244,24 +244,16 @@ class UserClientController extends Controller
     {   
         $request->merge([
             'user_id' => request()->user()->id,
+            'ends_at' => Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
         ]);
-        
-        if($request['plan_id'] == 1 || $request['plan_id'] == 2){ //mensualidad o pesas
-            $request->merge([
-                'ends_at' => Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
-            ]);
-        }else{ //entrenamiento del dia 
-            $request->merge([
-                'ends_at' => Carbon::now()->timezone('America/El_Salvador')->toDateTimeString(),
-            ]);
-        }
+
         $suscription = Suscription::create([
             'client_id' => $request['client_id'],
             'plan_id' => $request['plan_id'],
             'user_id' => $request['user_id'],
             'ends_at' => $request['ends_at']
         ]);
-
+ 
         //cash
         $transaction = [
             'client_id' => $request['client_id'],
@@ -340,7 +332,7 @@ class UserClientController extends Controller
             'client_attendace_training_session' => $client->attendances_training_sessions()->where('training_session_id',$id)->first(),
             'training_session_coaches' => $training_session->training_sessions_coaches,
             'training_session_exercises' => $training_session->training_sessions_exercises,
-            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname],
+            'client' => ['id' => $client->id,'name'=> $client->name,'lastname' => $client->lastname, 'deleted_at' => $client->deleted_at],
         ]);
     }
     public function registerAttendanceDate(Client $client,int $id, Request $request)
