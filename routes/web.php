@@ -70,9 +70,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('/products',ProductController::class);
     Route::post('products/{product}/restore',[ProductController::class,'restore'])->name('products.restore');
 
-
     //USER -COACHES
     Route::resource('/coaches',CoachController::class);
+    Route::post('coaches/{coach}/restore',[CoachController::class,'restore'])->name('coaches.restore');
+    Route::get('coaches/{coach}/training-sessions/{id}',[CoachController::class,'showTrainingSessions'])->name('coaches.showTrainingSessions');  
 
 });
 
