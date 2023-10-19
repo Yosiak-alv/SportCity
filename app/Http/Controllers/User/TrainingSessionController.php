@@ -46,7 +46,6 @@ class TrainingSessionController extends Controller
      */
     public function create()
     {
-        //dd(Coach::select(['id','name'])->where('gym_id',request()->user()->gym_id)->get());
         return Inertia::render('User/Training Sessions/CreateEditTrainingSession',[
             'coaches' => Coach::select(['id','name'])->where('gym_id',request()->user()->gym_id)->get(),
             'clients' => Client::select(['id','name','lastname'])->where('gym_id',request()->user()->gym_id)->get(),
@@ -59,31 +58,47 @@ class TrainingSessionController extends Controller
      */
     public function store(CreateEditTrainingSessionRequest $request)
     {
-        $request->merge(['gym_id' => request()->user()->gym_id,'user_id' => request()->user()->id]);
-        $training_session = TrainingSession::create($request->validatedTrainingSession());
-        
-        $repetitions = collect([]);
-        $attendance_dates = collect([]);
-
-        foreach ($request->validatedRepetitions() as $id => $repetition) {
-            if ($request->validatedExerciseIds()->contains($id)) {
-                $repetitions->put($id,['repetitions' => $repetition,]);
+        try{
+            $request->merge(['gym_id' => request()->user()->gym_id,'user_id' => request()->user()->id]);
+            
+            $repetitions = collect([]);
+            $attendance_dates = collect([]);
+    
+            foreach ($request->validatedRepetitions() as $id => $repetition) {
+                if ($request->validatedExerciseIds()->contains($id)) {
+                    $repetitions->put($id,['repetitions' => $repetition,]);
+                }
             }
-        }
-        foreach ($request->validatedAttendaceDates() as $id => $attendance_date) {
-            if ($request->validatedClientIds()->contains($id)) {
-                $attendance_dates->put($id,['attendance_date' => $attendance_date,]);
+            foreach ($request->validatedAttendaceDates() as $id => $attendance_date) {
+                if ($request->validatedClientIds()->contains($id)) {
+                    $client_date = new \DateTime($attendance_date);
+                    $starts_At = new \DateTime($request->starts_at);
+                    $finish_At = new \DateTime($request->finish_at);
+                    if(($client_date >= $starts_At )  &&  ($client_date <= $finish_At) ){
+                        $attendance_dates->put($id,['attendance_date' => $attendance_date,]);
+                    }else{
+                        throw new \Exception('Clients Attendance Date Must be in the Interval [ starts_at, finish_at ] !!!');
+                    }
+                }
+               
             }
+            $training_session = TrainingSession::create($request->validatedTrainingSession());
+            $training_session->training_sessions_coaches()->sync($request->validatedCoachIds());
+            $training_session->training_sessions_exercises()->sync($repetitions);
+            $training_session->attendancesClients()->sync($attendance_dates); 
+            
+            return redirect()->route('training-sessions.show',$training_session->id)->with([
+                'level' => 'success',
+                'message' => 'Training Session Created Succesfully!'
+            ]);
         }
-        //dd($request->validated(),$repetitions,$attendance_dates);
-        $training_session->training_sessions_coaches()->sync($request->validatedCoachIds());
-        $training_session->training_sessions_exercises()->sync($repetitions);
-        $training_session->attendancesClients()->sync($attendance_dates);
-
-        return redirect()->route('training-sessions.show',$training_session->id)->with([
-            'level' => 'success',
-            'message' => 'Training Session Created Succesfully!'
-        ]);
+        catch(\Exception $e){
+            return back()->with([
+                'level' => 'danger',
+                'message' => $e->getMessage()
+            ]);
+        }
+       
     }
     /**
      * Display the specified resource.
@@ -118,31 +133,47 @@ class TrainingSessionController extends Controller
      */
     public function update(CreateEditTrainingSessionRequest $request ,TrainingSession $training_session)
     {
-        $request->merge(['gym_id' => request()->user()->gym_id,'user_id' => request()->user()->id]);
-        $training_session->update($request->validatedTrainingSession());
-        
-        $repetitions = collect([]);
-        $attendance_dates = collect([]);
+        try{
 
-        foreach ($request->validatedRepetitions() as $id => $repetition) {
-            if ($request->validatedExerciseIds()->contains($id)) {
-                $repetitions->put($id,['repetitions' => $repetition,]);
-            }
-        }
-        foreach ($request->validatedAttendaceDates() as $id => $attendance_date) {
-            if ($request->validatedClientIds()->contains($id)) {
-                $attendance_dates->put($id,['attendance_date' => $attendance_date,]);
-            }
-        }
-        //dd($request->validated(),$repetitions,$attendance_dates);
-        $training_session->training_sessions_coaches()->sync($request->validatedCoachIds());
-        $training_session->training_sessions_exercises()->sync($repetitions);
-        $training_session->attendancesClients()->sync($attendance_dates);
+            $request->merge(['gym_id' => request()->user()->gym_id,'user_id' => request()->user()->id]);
 
-        return redirect()->route('training-sessions.show',$training_session->id)->with([
-            'level' => 'success',
-            'message' => 'Training Session Updated Succesfully!'
-        ]);
+            $repetitions = collect([]);
+            $attendance_dates = collect([]);
+    
+            foreach ($request->validatedRepetitions() as $id => $repetition) {
+                if ($request->validatedExerciseIds()->contains($id)) {
+                    $repetitions->put($id,['repetitions' => $repetition,]);
+                }
+            }
+            foreach ($request->validatedAttendaceDates() as $id => $attendance_date) {
+                if ($request->validatedClientIds()->contains($id)) {
+                    $client_date = new \DateTime($attendance_date);
+                    $starts_At = new \DateTime($request->starts_at);
+                    $finish_At = new \DateTime($request->finish_at);
+                    if(($client_date >= $starts_At )  &&  ($client_date <= $finish_At) ){
+                        $attendance_dates->put($id,['attendance_date' => $attendance_date,]);
+                    }else{
+                        throw new \Exception('Clients Attendance Date Must be in the Interval [ starts_at, finish_at ] !!!');
+                    }
+                }
+            }
+    
+            $training_session->update($request->validatedTrainingSession());
+            $training_session->training_sessions_coaches()->sync($request->validatedCoachIds());
+            $training_session->training_sessions_exercises()->sync($repetitions);
+            $training_session->attendancesClients()->sync($attendance_dates);
+    
+            return redirect()->route('training-sessions.show',$training_session->id)->with([
+                'level' => 'success',
+                'message' => 'Training Session Updated Succesfully!'
+            ]);
+
+        }catch(\Exception $e){
+            return back()->with([
+                'level' => 'danger',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -150,8 +181,7 @@ class TrainingSessionController extends Controller
      */
     public function destroy(TrainingSession $training_session)
     {
-        //supuestamente la base ya lo hace con cascadeOnDelete confirmado si xd
-        $training_session->delete();
+        $training_session->delete(); //supuestamente la base ya lo hace con cascadeOnDelete confirmado si xd
 
         return redirect()->route('training-sessions.index')->with([
             'level' => 'success',

@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head,Link, router,useForm} from '@inertiajs/vue3';
+import { computed } from 'vue';
 import Card from '@/Components/Card.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -67,9 +68,15 @@ const form = useForm({
     repetitions : props.selected_exercises_reps ?? [],
 
 });
-
+// Create a computed property to clean the array
+const cleaned_attendance_date = computed(() => form.attendance_date.filter(item => item !== null));
+form.defaults({
+        name: 'attendance_date',
+        email: cleaned_attendance_date,
+    })
 const store = () => {
-    form.post(route('training-sessions.store'));
+    
+    form.post(route('training-sessions.store'),{});
 };
 
 const update = (id) => {
@@ -82,7 +89,7 @@ const update = (id) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ props.coach == null ? 'Create New Training Session': 'Edit Training Session'}}</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ props.training_session == null ? 'Create New Training Session': 'Edit Training Session'}}</h2>
         </template>
 
         <div class="py-12">
@@ -104,7 +111,7 @@ const update = (id) => {
                                 <InputError class="mt-2" :message="form.errors.name" />
                             </div>
                             <div class="mt-1">
-                                <InputLabel for="description" value="Description" />
+                                <InputLabel for="description" value="Description:" />
 
                                 <TextArea
                                     id="description"
@@ -119,7 +126,7 @@ const update = (id) => {
                         </div>
                         <div>
                             <div class="mt-1">
-                                <InputLabel for="duration" value="Duration" />
+                                <InputLabel for="duration" value="Duration:" />
 
                                 <TextInput
                                     id="duration"
@@ -133,32 +140,31 @@ const update = (id) => {
                                 <InputError class="mt-2" :message="form.errors.duration" />
                             </div>  
                             <div class="mt-1">
-                                <InputLabel for="starts_at" value="Starts At" />
-
-                                <input 
+                                <InputLabel for="starts_at" value="Starts At: (Ex: YYYY-MM-DD hh:mm:ss)" />
+                                <TextInput
                                     id="starts_at" 
+                                    type="text"
+                                    class="mt-1 block w-full"
                                     v-model="form.starts_at"
-                                    type="datetime-local"
-                                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600 rounded-md shadow-sm"
 
-                                >
-
+                                />
+                            
                                 <InputError class="mt-2" :message="form.errors.starts_at" />
                             </div>  
                             <div class="mt-1">
-                                <InputLabel for="finish_at" value="Finish At" />
-
-                                <input 
+                                <InputLabel for="finish_at" value="Finish At: (Ex: YYYY-MM-DD hh:mm:ss)" />
+                                <TextInput
                                     id="finish_at"
+                                    type="text"
+                                    class="mt-1 block w-full"
                                     v-model="form.finish_at"
-                                    type="datetime-local"
-                                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600 rounded-md shadow-sm"
 
-                                >
+                                />
+                                
                                 <InputError class="mt-2" :message="form.errors.finish_at" />
                             </div>    
                             <div class="mt-1">
-                                <InputLabel for="coach_id" value="Coaches" />
+                                <InputLabel for="coach_id" value="Coaches:" />
                                <!--  <multiselect
                                     v-model="form.coach_id" 
                                     :options="props.coaches"
@@ -205,9 +211,9 @@ const update = (id) => {
                                                 id="attendance_date"
                                                 v-model="form.attendance_date[client.id]"
                                                 type="datetime-local"
-                                                class="mt-1 block border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600 rounded-md shadow-sm"
-
+                                                class="mt-1 block w-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                                             >
+
                                             <InputError class="mt-2" :message="form.errors.attendance_date" />
                                         </div>
                                     </div>

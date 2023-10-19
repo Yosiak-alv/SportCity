@@ -27,8 +27,8 @@ class CreateEditTrainingSessionRequest extends FormRequest
             'duration' => ['required','numeric', 'gt:0','max:255'],
             'gym_id' => ['numeric','gt:0','exists:gyms,id'],
             'user_id' => ['numeric','gt:0','exists:users,id'],
-            'starts_at' => ['required'],
-            'finish_at' => ['required','after_or_equal:starts_at'],
+            'starts_at' => ['required','date','regex:/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/'],
+            'finish_at' => ['required','date','after:starts_at','regex:/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/'],
 
             'coach_id' => ['required','array'],
             'coach_id.*' => ['numeric','gt:0','exists:coaches,id'],
@@ -36,8 +36,8 @@ class CreateEditTrainingSessionRequest extends FormRequest
             'client_id' => ['required','array'],
             'client_id.*' => ['numeric','gt:0','exists:clients,id'],
             'attendance_date' => ['required','array'],
-            'attendance_date*' => ['string'],
-            
+            /* 'attendance_date*' => ['date','after_or_equal:starts_at','before_or_equal:finish_at','regex:/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/'], */
+            'attendance_date*' => ['date'],
             'exercise_id' => ['required','array'],
             'exercise_id.*' => ['numeric','gt:0','exists:exercises,id'],
             'repetitions' => ['required','array'],
