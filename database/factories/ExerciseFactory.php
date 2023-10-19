@@ -18,7 +18,8 @@ class ExerciseFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'demonstration' => fake()->url()
+            'demonstration_url' => fake()->url(),
+            'instructions' => fake()->paragraphs(1,true),
         ];
     }
 }

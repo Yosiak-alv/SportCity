@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignIdFor(TrainingSession::class)->nullable(false)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(Exercise::class)->nullable(false)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('repetitions');
-            $table->text('instructions');
         });
     }
 

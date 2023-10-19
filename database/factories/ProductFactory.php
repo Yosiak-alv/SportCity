@@ -20,7 +20,7 @@ class ProductFactory extends Factory
         $gym = Gym::inRandomOrder()->limit(1)->first();
         return [
             'uuid' => \Illuminate\Support\Str::uuid(),
-            'name' => fake()->word(),
+            'name' => fake()->unique()->word(),
             'description' => fake()->paragraph(),
             'unit_price' => fake()->randomFloat(2,5,500),
             'quantity' => fake()->randomDigitNotZero(),
