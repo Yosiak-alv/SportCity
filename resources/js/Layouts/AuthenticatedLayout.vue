@@ -137,6 +137,18 @@ const getPermission = (data) => {
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('clients.index')" :active="route().current('clients.index')" v-if="getPermission('view clients')">
+                            Clients
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('coaches.index')" :active="route().current('coaches.index')" v-if="getPermission('view coaches')">
+                            Coaches
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('training-sessions.index')" :active="route().current('training-sessions.index')" v-if="getPermission('view training sessions')">
+                            Training Sessions
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('products.index')" :active="route().current('products.index')" v-if="getPermission('view products')">
+                            Products
+                        </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
