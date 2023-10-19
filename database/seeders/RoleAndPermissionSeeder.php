@@ -60,6 +60,13 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'delete coach']);
         Permission::create(['name' => 'restore coach']);
 
+        //TRAINING SESSIONS
+        Permission::create(['name' => 'view training sessions']);
+        Permission::create(['name' => 'show training session']);
+        Permission::create(['name' => 'create training session']);
+        Permission::create(['name' => 'edit training session']);
+        Permission::create(['name' => 'delete training session']);
+
         //Permission::create(['name' => 'restoreAll clients']); create client_system
         //Permission::create(['name' => 'force-delete client']); 
 

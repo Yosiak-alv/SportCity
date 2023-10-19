@@ -27,7 +27,7 @@ class TrainingSession extends Model
 
     public function training_sessions_exercises():BelongsToMany
     {
-        return $this->belongsToMany(Exercise::class,'training_sessions_exercises')->withPivot(['repetitions','instructions']);
+        return $this->belongsToMany(Exercise::class,'training_sessions_exercises')->withPivot(['repetitions']);
     }
 
     public function training_sessions_coaches():BelongsToMany

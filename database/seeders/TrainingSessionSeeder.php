@@ -22,7 +22,6 @@ class TrainingSessionSeeder extends Seeder
             foreach($exercises->random(rand(1,$exercises->count())) as $exercise){
                 $trainingSession->training_sessions_exercises()->attach($exercise,[
                     'repetitions' => random_int(0,50),
-                    'instructions' => fake()->paragraph()
                 ]); 
             }
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\User\ClientSystemController;
 use App\Http\Controllers\User\CoachController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\TrainingSessionController;
 use App\Http\Controllers\User\UserClientController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -75,6 +76,11 @@ Route::middleware('auth')->group(function () {
     Route::post('coaches/{coach}/restore',[CoachController::class,'restore'])->name('coaches.restore');
     Route::get('coaches/{coach}/training-sessions/{id}',[CoachController::class,'showTrainingSessions'])->name('coaches.showTrainingSessions');  
 
+    //USER - TRAINING SESSIONS
+    Route::resource('/training-sessions',TrainingSessionController::class);
+    Route::delete('training-sessions/{training_session}/disassociate-all-clients',[TrainingSessionController::class,'disassociateAllClients'])->name('training-sessions.disassociateAllClients');
+    Route::delete('training-sessions/{training_session}/disassociate-all-exercises',[TrainingSessionController::class,'disassociateAllExercises'])->name('training-sessions.disassociateAllExercises');
+    Route::delete('training-sessions/{training_session}/disassociate-all-coaches',[TrainingSessionController::class,'disassociateAllCoaches'])->name('training-sessions.disassociateAllCoaches');
 });
 
 
