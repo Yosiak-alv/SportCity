@@ -26,7 +26,6 @@ class CreateClientPurchaseRequest extends FormRequest
             'product_id.*' =>'numeric|gt:0|decimal:0|max:255', //representa la iteracion de cada una 
             'quantity' => 'required|array',
             'quantity*' => 'numeric|gt:0|decimal:0',
-            'transaction' => ['required', 'string', 'in:Cash,Card'],
         ];
     }
     public function validatedProductIds()

@@ -22,7 +22,7 @@ class CreateEditProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','max:255'],
+            'name' => ['required','max:255',Rule::unique('products','name')->ignore($this->product)],
             'description' => ['required','min:10','string','max:5000'],
             'unit_price' => ['required', 'gt:0','numeric'],
             'gym_id' => ['required','gt:0','numeric',],
