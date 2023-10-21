@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class Coach extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasFactory, SoftDeletes;
+    use HasApiTokens, Notifiable, HasFactory, SoftDeletes, HasRoles;
 
     protected $hidden = [
         'password',

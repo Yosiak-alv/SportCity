@@ -11,10 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class Client extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasFactory, SoftDeletes;
+    use HasApiTokens, Notifiable, HasFactory, SoftDeletes, HasRoles;
 
     protected $hidden = [
         'password',
