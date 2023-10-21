@@ -7,6 +7,7 @@ use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\TrainingSessionController;
 use App\Http\Controllers\User\UserClientController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -81,6 +82,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('training-sessions/{training_session}/disassociate-all-clients',[TrainingSessionController::class,'disassociateAllClients'])->name('training-sessions.disassociateAllClients');
     Route::delete('training-sessions/{training_session}/disassociate-all-exercises',[TrainingSessionController::class,'disassociateAllExercises'])->name('training-sessions.disassociateAllExercises');
     Route::delete('training-sessions/{training_session}/disassociate-all-coaches',[TrainingSessionController::class,'disassociateAllCoaches'])->name('training-sessions.disassociateAllCoaches');
+
+    //USERS 
+    Route::resource('/users',UserController::class);
+    Route::patch('users/{user}/update-password',[UserController::class,'updatePassword'])->name('users.updatePassword');
+    Route::post('users/{user}/restore',[UserController::class,'restore'])->name('users.restore');
 });
 
 

@@ -39,14 +39,14 @@ const getPermission = (data) => {
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
-                                </NavLink>
                                 <NavLink :href="route('clients.index')" :active="route().current('clients.index')" v-if="getPermission('view clients')">
                                     Clients
                                 </NavLink>
                                 <NavLink :href="route('coaches.index')" :active="route().current('coaches.index')" v-if="getPermission('view coaches')">
                                     Coaches
+                                </NavLink>
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')" v-if="getPermission('view users')">
+                                    Users
                                 </NavLink>
                                 <NavLink :href="route('training-sessions.index')" :active="route().current('training-sessions.index')" v-if="getPermission('view training sessions')">
                                     Training Sessions
