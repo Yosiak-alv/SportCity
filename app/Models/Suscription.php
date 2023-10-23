@@ -24,4 +24,19 @@ class Suscription extends Model
     {
         return $this->belongsTo(Plan::class);
     }
+
+    public function scopeFilter($query , array $filters)
+    {
+        $query->when($filters['search'] ?? false, function( $query, $search){
+            $query->where(fn($query) =>
+                $query->where('id','like','%'.$search.'%')
+                ->orWhere('ends_at','like','%'.$search.'%')
+            )->orWhereHas('client', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })->orWhereHas('plan', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('price','like','%'.$search.'%');
+            });
+        });
+    }
 }

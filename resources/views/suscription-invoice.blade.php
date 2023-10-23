@@ -129,19 +129,19 @@
                         <tr>
                             <td>
                                 <strong>GYM INFORMATION</strong>.<br>
-                                {{$client?->gym->name}}<br> 
-                                {{$client?->gym->email}}<br>
-                                {{$client?->gym->address}}<br>
-                                {{$client?->gym->department->name}}<br>
+                                {{$suscription?->client?->gym->name}}<br> 
+                                {{$suscription?->client?->gym->email}}<br>
+                                {{$suscription?->client?->gym->address}}<br>
+                                {{$suscription?->client?->gym->department->name}}<br>
                             </td>
                             
                             <td>
                                 <strong>BILLING INFORMATION</strong><br>
-                                {{$client?->name}}, {{$client?->lastname}}<br>
-                                {{$client?->dui}}<br> 
-                                {{$client?->email}}<br> 
-                                {{$client?->address}}<br> 
-                                Phone: {{$client?->phone}}<br>
+                                {{$suscription?->client?->name}}, {{$suscription?->client?->lastname}}<br>
+                                {{$suscription?->client?->dui}}<br> 
+                                {{$suscription?->client?->email}}<br> 
+                                {{$suscription?->client?->address}}<br> 
+                                Phone: {{$suscription?->client?->phone}}<br>
                             </td>
                         </tr>
                     </table>
@@ -156,10 +156,8 @@
             
             <tr class="details">
                 <td>
-                  {{$transaction?->formaPago}}<br> 
-                  {{$transaction?->mensaje}}<br>
-                  {{$transaction?->idTransaccion ? 'Transaction ID:'. $transaction?->idTransaccion : ''}}<br>
-                  {{$transaction?->codigoAutorizacion ? 'Auth Code:'. $transaction?->codigoAutorizacion : ''}}<br>
+                  Cash
+                  USD - US Dollar
                 </td>
             </tr>
             
@@ -179,7 +177,7 @@
                 </td>
                 
                 <td>
-					        ${{$suscription?->plan->price}}
+					${{$suscription?->plan->price}}
                 </td>
             </tr>
             

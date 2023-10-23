@@ -51,6 +51,9 @@ const getPermission = (data) => {
                                 <NavLink :href="route('training-sessions.index')" :active="route().current('training-sessions.index')" v-if="getPermission('view training sessions')">
                                     Training Sessions
                                 </NavLink>
+                                <NavLink :href="route('suscriptions.index')" :active="route().current('suscriptions.index')" v-if="getPermission('view products')">
+                                    Suscriptions
+                                </NavLink>
                                 <NavLink :href="route('products.index')" :active="route().current('products.index')" v-if="getPermission('view products')">
                                     Products
                                 </NavLink>
