@@ -37,6 +37,7 @@ class TrainingSessionController extends Controller
                         ->orWhere('finish_at','like','%'.$search.'%')
                 );
             })->paginate(8)->withQueryString(),
+            'exercises' => Exercise::all(['id','name','instructions' ,'created_at','updated_at']),
             'filters' => \Illuminate\Support\Facades\Request::only(['search']),
         ]);
     }
