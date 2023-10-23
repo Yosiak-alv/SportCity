@@ -3,8 +3,11 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\User\ClientSystemController;
 use App\Http\Controllers\User\CoachController;
+use App\Http\Controllers\User\ExerciseController;
+use App\Http\Controllers\User\PlanController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\SuscriptionController;
 use App\Http\Controllers\User\TrainingSessionController;
 use App\Http\Controllers\User\UserClientController;
 use App\Http\Controllers\User\UserController;
@@ -82,12 +85,20 @@ Route::middleware('auth')->group(function () {
     Route::delete('training-sessions/{training_session}/disassociate-all-clients',[TrainingSessionController::class,'disassociateAllClients'])->name('training-sessions.disassociateAllClients');
     Route::delete('training-sessions/{training_session}/disassociate-all-exercises',[TrainingSessionController::class,'disassociateAllExercises'])->name('training-sessions.disassociateAllExercises');
     Route::delete('training-sessions/{training_session}/disassociate-all-coaches',[TrainingSessionController::class,'disassociateAllCoaches'])->name('training-sessions.disassociateAllCoaches');
-
+    Route::resource('/exercises',ExerciseController::class)->except(['index']);
     //USERS 
     Route::resource('/users',UserController::class);
     Route::patch('users/{user}/update-password',[UserController::class,'updatePassword'])->name('users.updatePassword');
     Route::post('users/{user}/restore',[UserController::class,'restore'])->name('users.restore');
-});
+
+    //USERS - SUSCRIPTIONS
+    Route::resource('/suscriptions',SuscriptionController::class);
+    Route::get('suscriptions/{suscription}/invoice',[SuscriptionController::class,'suscriptionInvoice'])->name('suscriptions.suscriptionInvoice');
+    Route::patch('suscriptions/{suscription}/cancel',[SuscriptionController::class,'cancelSuscription'])->name('suscriptions.cancelSuscription');
+
+    //USERS - PLANS
+    Route::resource('/plans',PlanController::class)->except(['index']);
+}); 
 
 
 require __DIR__.'/auth.php';
