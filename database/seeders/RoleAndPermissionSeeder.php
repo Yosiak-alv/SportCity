@@ -35,8 +35,6 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'create client suscription']);
         Permission::create(['name' => 'cancel client suscription']);
 
-        Permission::create(['name' => 'view client cash transactions']);
-
         Permission::create(['name' => 'assign client training_sessions']);
         Permission::create(['name' => 'register client atendance_date training_session']);
         Permission::create(['name' => 'delete client training_session']);
@@ -66,7 +64,29 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'create training session']);
         Permission::create(['name' => 'edit training session']);
         Permission::create(['name' => 'delete training session']);
+        
+        //EXERCISE
+        Permission::create(['name' => 'view exercises']);
+        Permission::create(['name' => 'show exercise']);
+        Permission::create(['name' => 'create exercise']);
+        Permission::create(['name' => 'edit exercise']);
+        Permission::create(['name' => 'delete exercise']);
 
+        //SUSCRIPTIONS 
+        Permission::create(['name' => 'view suscriptions']);
+        Permission::create(['name' => 'show suscription']);
+        Permission::create(['name' => 'create suscription']);
+        Permission::create(['name' => 'edit suscription']);
+        Permission::create(['name' => 'delete suscription']);
+        Permission::create(['name' => 'cancel suscription']);
+        
+        //PLANS
+        Permission::create(['name' => 'view plans']);
+        Permission::create(['name' => 'show plan']);
+        Permission::create(['name' => 'create plan']);
+        Permission::create(['name' => 'edit plan']);
+        Permission::create(['name' => 'delete plan']);
+        
         //USERS
         Permission::create(['name' => 'view users']);
         Permission::create(['name' => 'show user']);
