@@ -45,7 +45,7 @@ class PlanPolicy
      */
     public function delete(User $user, Plan $plan): bool
     {
-        return $user->hasRole('administrador') &&  $user->hasPermissionTo('delete plan');
+        return $user->hasRole('administrator') &&  $user->hasPermissionTo('delete plan');
     }
 
     /**
