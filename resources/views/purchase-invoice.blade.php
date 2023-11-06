@@ -156,11 +156,9 @@
             
             <tr class="details">
                 <td>
-                  {{$transaction?->formaPago}}<br> 
-                  {{$transaction?->mensaje}}<br>
-                  {{$transaction?->idTransaccion ? 'Transaction ID:'. $transaction?->idTransaccion : ''}}<br>
-                  {{$transaction?->codigoAutorizacion ? 'Auth Code:'. $transaction?->codigoAutorizacion : ''}}<br>
-                </td>
+                    Cash
+                    USD - US Dollar
+                  </td>
             </tr>
             
             <tr class="heading">
