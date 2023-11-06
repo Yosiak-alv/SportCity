@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
     // USER - CLIENT
     Route::resource('/clients',UserClientController::class);
+    Route::patch('clients/{client}/update-password',[UserClientController::class,'updatePassword'])->name('clients.updatePassword');
     Route::post('clients/{client}/restore',[UserClientController::class,'restore'])->name('clients.restore');
     //Route::delete('clients/{client}/forceDelete',[UserClientController::class,'forceDelete'])->name('clients.forceDelete');
 
@@ -78,6 +79,7 @@ Route::middleware('auth')->group(function () {
     //USER -COACHES
     Route::resource('/coaches',CoachController::class);
     Route::post('coaches/{coach}/restore',[CoachController::class,'restore'])->name('coaches.restore');
+    Route::patch('coaches/{coach}/update-password',[CoachController::class,'updatePassword'])->name('coaches.updatePassword');
     Route::get('coaches/{coach}/training-sessions/{id}',[CoachController::class,'showTrainingSessions'])->name('coaches.showTrainingSessions');  
 
     //USER - TRAINING SESSIONS
