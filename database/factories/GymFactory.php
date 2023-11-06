@@ -19,7 +19,7 @@ class GymFactory extends Factory
     {
         $department = Department::inRandomOrder()->limit(1)->first();
         return [
-            'name' => fake()->name(),
+            'name' => fake()->unique()->name(),
             'address' => fake()->address(),
             'email' => fake()->unique()->email(),
             'phone' => fake()->numerify('#### ####'),

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateEditTrainingSessionRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class CreateEditTrainingSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','string','max:255'],
+            'name' => ['required','string','max:255', Rule::unique('training_sessions','name')->ignore($this?->training_session)],
             'description' => ['required','min:10','string','max:5000'],
             'duration' => ['required','numeric', 'gt:0','max:255'],
             'gym_id' => ['numeric','gt:0','exists:gyms,id'],

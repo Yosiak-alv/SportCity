@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 class PlanController extends Controller
 {
@@ -30,7 +31,7 @@ class PlanController extends Controller
     public function store(Request $request)
     {
         $attr = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required','string','max:255',Rule::unique('plans','name')],
             'price' => 'required|numeric|gt:0',
         ]);
         $plan = Plan::create($attr);
@@ -62,7 +63,7 @@ class PlanController extends Controller
     public function update(Request $request, Plan $plan)
     {
         $attr = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required','string','max:255',Rule::unique('plans','name')->ignore($plan)],
             'price' => 'required|numeric|gt:0',
         ]);
         $plan->update($attr);

@@ -17,7 +17,7 @@ class PlanFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => fake()->unique()->word(),
             'price' =>fake()->randomFloat(2,5,500),
         ];
     }

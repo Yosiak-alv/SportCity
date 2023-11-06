@@ -17,7 +17,7 @@ class ExerciseFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => fake()->unique()->word(),
             'demonstration_url' => fake()->url(),
             'instructions' => fake()->paragraphs(1,true),
         ];

@@ -24,7 +24,7 @@ class TrainingSessionFactory extends Factory
         $gym = Gym::inRandomOrder()->limit(1)->first();
         $starts_at = Carbon::createFromTimeStamp(fake()->dateTimeBetween('-1 years', '+1 month')->getTimestamp());
         return [
-            'name' =>fake()->word(),
+            'name' =>fake()->unique()->word(),
             'description' => fake()->paragraph(),
             'duration' => fake()->randomFloat(2,0,60),
             'gym_id' => $gym->id,
