@@ -13,10 +13,18 @@ const props = defineProps({
         type:Object,
         required:false
     },
+    selected_roles:{
+        type:Object,
+        required:false
+    },
     gyms:{
         type:Object,
         required:true
-    }
+    },
+    roles:{
+        type:Object,
+        required:true
+    },
 });
 
 const form = useForm({
@@ -27,6 +35,7 @@ const form = useForm({
     phone: props.user?.phone ?? '',
     email: props.user?.email ?? '',
     gym_id: props.user?.gym_id ?? '',
+    roles_id: props.selected_roles ?? [],
     password: props.user?.password ,
 });
 
@@ -107,6 +116,22 @@ const update = (id) => {
                         </div>
                     </div>
                     <div>
+                        <div class="mt-1">
+                            <InputLabel for="roles_id" value="Roles" />
+
+                            <select multiple
+                                id="roles_id"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+                                v-model="form.roles_id"
+                                required
+                            >
+                                <option v-for="role in props.roles" :value="role.id" :key="role.id">
+                                    {{role.name}} 
+                                </option>
+                            </select>
+
+                            <InputError class="mt-2" :message="form.errors.roles_id" />
+                        </div>
                         <div class="mt-1">
                             <InputLabel for="phone" value="Phone" />
 

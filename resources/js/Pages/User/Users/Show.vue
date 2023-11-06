@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 import { Head,Link, router, usePage,useForm} from '@inertiajs/vue3';
-import {ref, watch} from "vue";
+import {ref, watch,nextTick} from "vue";
 import {debounce} from "lodash";
 import Card from '@/Components/Card.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -10,6 +10,7 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Modal from '@/Components/Modal.vue';
 import TrashedMessage from '@/Components/TrashedMessage.vue';
+import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 
@@ -18,7 +19,7 @@ const props = defineProps({
         type:Object,
         required:true
 
-    }
+    },
 });
 
 
@@ -146,6 +147,37 @@ const getPermission = (data) => {
                 </div>
             </Card>
         </div>
+
+        <div class="py-2">
+            <div class="max-w-7xl mx-auto text-center my-4 text-gray-900 dark:text-gray-100">
+                <h2 class="text-3xl font-semibold">Roles Permission</h2>
+            </div>
+
+            <div class="mt-4">
+                <div class="flex justify-center">
+                    <div v-for="role in props.user.roles" :key="role.id">
+                        <div class="flex flex-col mb-4">
+                            <Card class="">
+                                <div class="border-b border-gray-400 flex justify-between margin-b mb-4">
+                                    <h2 class="text-4xl font-bold ml-2 mt-3 p-5">
+                                        {{role.name}}
+                                    </h2>
+                                </div>
+                                <div class="overflow-y-scroll" style="height: 20rem;">
+                                    <div class="text-base p-4" v-for="role_permission in role.permissions">
+                                        <div class="w-full text-justify ">
+                                            <h3 class="ml-8 inline text-2xl">
+                                                {{role_permission.name}}
+                                            </h3>
+                                        </div>
+                                    </div>    
+                                </div>
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </AuthenticatedLayout>
     
 
@@ -197,7 +229,7 @@ const getPermission = (data) => {
                         placeholder="Password"
                     />
 
-                    <InputError :message="form.errors.password" class="mt-2" />
+                   
                 </div>
                 <div class="mt-6">
                 <InputLabel for="password_confirmation" value="Confirm Password"  class="sr-only" />
@@ -209,8 +241,7 @@ const getPermission = (data) => {
                     class="mt-1 block w-3/4"
                     placeholder="Confirm_Password"
                 />
-
-                <InputError :message="passwordErrors" class="mt-2" />
+                <InputError :message="form.errors.password" class="mt-2" />
             </div>
 
                 <div class="mt-6 flex justify-end">

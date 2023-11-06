@@ -98,7 +98,7 @@ const getPermission = (data) => {
                                     Lastname
                                 </th>
                                 <th scope="col" class="px-6 py-3">
-                                    Phone
+                                    Roles
                                 </th>
                                 <th scope="col" class="px-6 py-3">
                                     <span class="sr-only"></span>
@@ -140,15 +140,20 @@ const getPermission = (data) => {
                                         </div>
                                         
                                     </td>
-                                    <td class="px-6 py-4 ">
+                                    <td class="px-6 py-4">
                                         <div v-if="getPermission('show user')">
                                             <Link :href="route('users.show',{id:user.id})">
-                                                {{user.phone}}
+                                                <div v-for="role in user.roles">
+                                                    {{role.name}}<br>
+                                                </div>
                                             </Link>
                                         </div>
                                         <div v-else>
-                                            {{user.phone}}
+                                            <div v-for="role in user.roles">
+                                                {{role.name}}<br>
+                                            </div>
                                         </div>
+                                        
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <div v-if="getPermission('show user')">
