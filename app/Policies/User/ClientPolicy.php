@@ -41,6 +41,10 @@ class ClientPolicy
         
         return ($client->trashed() ? false : $user->hasPermissionTo('edit client'));
     }
+    public function updatePassword(User $user, Client $client): bool
+    {
+        return ($client->trashed() ? false : $user->hasRole('administrator') &&  $user->hasPermissionTo('update client password'));
+    }
 
     /**
      * Determine whether the user can delete the model.

@@ -18,10 +18,6 @@ const props = defineProps({
         type:Object,
         required:true
     },
-    transaction:{
-        type:Object,
-        required:true
-    }
 });
 
 
@@ -140,10 +136,8 @@ const CancelSuscription = () => {
                                 Payment Method:
                             </dt>
                             <dd class="font-medium text-gray-800 dark:text-gray-200">
-                                <span class="block font-semibold">{{transaction.formaPago}}</span><br>
-                                <span class="not-italic font-normal">{{transaction.mensaje}}</span><br>
-                                <span class="not-italic font-normal">{{transaction.idTransaccion ? 'Transaction ID:'. transaction.idTransaccion : ''}}</span><br>
-                                <span class="not-italic font-normal">{{transaction.codigoAutorizacion ? 'Auth Code:'. transaction.codigoAutorizacion : ''}}</span><br>
+                                <span class="block font-semibold">Cash/Transfer</span><br>
+                                <span class="not-italic font-normal">USD - Dollar</span><br>
                             </dd>
                             </dl>
                             

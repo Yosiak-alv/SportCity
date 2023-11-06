@@ -1,13 +1,16 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-import { Head,Link, router, usePage} from '@inertiajs/vue3';
-import {ref, watch} from "vue";
+import { Head,Link, router, usePage, useForm} from '@inertiajs/vue3';
+import {ref, watch ,nextTick} from "vue";
 import {debounce} from "lodash";
 import Card from '@/Components/Card.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import InputError from '@/Components/InputError.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
 import TrashedMessage from '@/Components/TrashedMessage.vue';
 
@@ -15,8 +18,6 @@ import ClientSystemIndex from './Partials/Client_System/ClientSystemIndex.vue';
 import ClientSuscriptionIndex from './Partials/Client_Suscription/ClientSuscriptionIndex.vue';
 import ClientTrainingSessionsIndex from './Partials/Client_TrainingSessions/ClientTrainingSessionsIndex.vue';
 import ClientPurchasesIndex from './Partials/Client_Purchase/ClientPurchasesIndex.vue';
-
-import CashIndex from './Partials/Client_Transactions/CashIndex.vue';
 
 const props = defineProps({
     client:{
@@ -33,12 +34,6 @@ const props = defineProps({
         required:true
     }
 });
-
-/* const search = ref(props.filters.search);
-//search Handling
-watch(search, debounce((value) => {
-    router.get(route('clients.show',{id:client.id}), {search:value}, { preserveState:true , replace:true });
-},500)); */
 
 const edit = (id) => {
     router.get(route('clients.edit',{id:id}))
@@ -60,6 +55,39 @@ const deleteClient = () => {
         preserveScroll: true,
         onSuccess: () => closeModal(),
         onError: () => closeModal(),
+    });
+};
+
+//---Modal Password Section----
+const passwordInput = ref(null);
+const form = useForm({
+    password: '',
+    password_confirmation: '',
+});
+
+const confirmingPasswordEdition = ref(false);
+    
+const confirmPasswordEdition = () => {
+    confirmingPasswordEdition.value = true;
+    nextTick(() => passwordInput.value.focus());
+};
+
+const closePasswordModal = () => {
+    confirmingPasswordEdition.value = false;
+    form.reset();
+};
+
+const updatePassword = () => {
+    form.patch(route('clients.updatePassword', props.client.id), {
+        preserveScroll: true,
+        onSuccess: () => closePasswordModal(),
+        onError: () => {
+            if (form.errors.password) {
+                form.reset('password', 'password_confirmation');
+                passwordInput.value.focus();
+            }
+        },
+        onFinish: () => form.reset(),
     });
 };
 
@@ -91,50 +119,56 @@ const getPermission = (data) => {
 
         <div class="py-12">
             <Card class="max-w-7xl">
-                <div class="flex justify-between items-center ">
-                    <div class="flex justify-start items-center p-6">
+                <div class="grid grid-cols-4 gap-4 p-6 items-center">
+                    <div class="col-span-1">
                         <div class="ml-8">
                             <img src="/storage/img/human.png" class="rounded w-40 ">
                         </div>
-                        
-                        <div class="ml-12">
-                            <span class="inline text-5xl h-fit">{{ client.name }}, {{client.lastname}}</span>
-                            <div class="mt-2 text-lg">
-                                <span class="font-semibold">Genre:</span> {{ client.genre }}
-                                <br>
-                                <span class="font-semibold">Phone:</span> {{ client.phone }}
-                                <br>
-                                <span class="font-semibold">Address:</span> {{ client.address }}
-                                <br>
-                                <span class="font-semibold">Email:</span> {{ client.email }}
-                                <br>
-                                <span class="font-semibold">Birth Date:</span> {{ client.birth_date }}
-                                <br>
-                                <span class="font-semibold">Height:</span> {{ client.height }}
-                                <br>
-                                <span class="font-semibold">Weight:</span> {{ client.weight }}
-                                <br>
-                                <span class="font-semibold">Gym:</span> {{ client.gym.name }}
-                                <br>
-                                <span class="font-semibold">Gym Address:</span> {{client.gym.department.name}}, {{ client.gym.address }}
-                                <br>
-                                <span v-if="props.client.deleted_at" class="font-semibold">Deleted at:</span> {{props.client.deleted_at}}
-                            </div>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="inline text-5xl h-fit">{{ client.name }}, {{client.lastname}}</span>
+                        <div class="mt-2 text-lg">
+                            <span class="font-semibold">Genre:</span> {{ client.genre }}
+                            <br>
+                            <span class="font-semibold">Phone:</span> {{ client.phone }}
+                            <br>
+                            <span class="font-semibold">Address:</span> {{ client.address }}
+                            <br>
+                            <span class="font-semibold">Email:</span> {{ client.email }}
+                            <br>
+                            <span class="font-semibold">Birth Date:</span> {{ client.birth_date }}
+                            <br>
+                            <span class="font-semibold">Height:</span> {{ client.height }}
+                            <br>
+                            <span class="font-semibold">Weight:</span> {{ client.weight }}
+                            <br>
+                            <span class="font-semibold">Gym:</span> {{ client.gym.name }}
+                            <br>
+                            <span class="font-semibold">Gym Address:</span> {{client.gym.department.name}}, {{ client.gym.address }}
+                            <br>
+                            <span v-if="props.client.deleted_at" class="font-semibold">Deleted at:</span> {{props.client.deleted_at}}
                         </div>
                     </div>
-                    
-                    <div class=" flex flex-col justify-center items-center mr-8">
-                        <PrimaryButton class="w-full" @click="edit(client.id)" v-if="!props.client.deleted_at && getPermission('edit client')">
-                            Edit Client
-                        </PrimaryButton>
-                        <DangerButton class="mt-2 w-full" @click="confirmClientDeletion()" v-if="!props.client.deleted_at && getPermission('delete client')">
-                            Delete Client
-                        </DangerButton>
+                    <div class="col-span-1 justify-items-center">
+                        <div>
+                            <PrimaryButton class="ml-8" @click="edit(client.id)" v-if="!props.client.deleted_at && getPermission('edit client')">
+                                Edit Client
+                            </PrimaryButton>
+                        </div>
+                        <div>
+                            <SecondaryButton class="ml-8 mt-2" @click="confirmPasswordEdition()" v-if="!props.client.deleted_at && getPermission('update client password')">
+                                Update Password
+                            </SecondaryButton>
+                        </div>
+                        <div>
+                            <DangerButton class="mt-2 ml-8" @click="confirmClientDeletion()" v-if="!props.client.deleted_at && getPermission('delete client')">
+                                Delete Client
+                            </DangerButton>
+                        </div>
                     </div>
                 </div>
             </Card>
         </div>
-
 
         <div class="py-9">
             <ClientTrainingSessionsIndex  :clientId="props.client.id" :trainingSessions="props.client_attendance_training_sessions" :filters="props.filters" :deleted="props.client.deleted_at == null ? false:true"/>
@@ -166,11 +200,6 @@ const getPermission = (data) => {
                 <ClientPurchasesIndex :clientId="props.client.id" :purchases="props.client.purchases" :deleted="props.client.deleted_at == null ? false:true"/>
             </div>
         </div> -->
-        <div class="flex flex-col">
-            <div v-if="getPermission('view client cash transactions')">
-                <CashIndex class="" :cashTransactions="props.client.cash_transactions"/>
-            </div>
-        </div>
     </AuthenticatedLayout>
     
 
@@ -196,6 +225,58 @@ const getPermission = (data) => {
                 >
                     Confirm
                 </DangerButton>
+            </div>
+        </div>
+    </Modal>
+
+    <Modal :show="confirmingPasswordEdition" @close="closePasswordModal">
+        <div class="p-6">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Are you sure you want to update this Client Password?
+            </h2>
+
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Once the password has been updated, the client in question must use the 
+                password that was updated, be sure before updating.
+            </p>
+
+            <div class="mt-6">
+                <InputLabel for="password" value="Password" class="sr-only" />
+
+                <TextInput
+                    id="password"
+                    ref="passwordInput"
+                    v-model="form.password"
+                    type="password"
+                    class="mt-1 block w-3/4"
+                    placeholder="Password"
+                />
+            </div>
+            <div class="mt-6">
+            <InputLabel for="password_confirmation" value="Confirm Password"  class="sr-only" />
+
+            <TextInput
+                id="password_confirmation"
+                v-model="form.password_confirmation"
+                type="password"
+                class="mt-1 block w-3/4"
+                placeholder="Confirm_Password"
+            />
+
+            <InputError :message="form.errors.password" class="mt-2" />
+        </div>
+
+            <div class="mt-6 flex justify-end">
+                <SecondaryButton @click="closePasswordModal"> Cancel </SecondaryButton>
+
+                <PrimaryButton
+                    class="ml-3"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                    @click="updatePassword()"
+                >
+                    Update Password
+                </PrimaryButton>
             </div>
         </div>
     </Modal>

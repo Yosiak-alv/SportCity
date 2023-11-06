@@ -29,10 +29,6 @@ class Client extends Authenticatable
     {
         return $this->belongsToMany(System::class,'system_client')->withPivot('condition');
     }
-    public function cashTransactions(): HasMany
-    {
-        return $this->hasMany(CashTransaction::class)->orderBy('created_at','DESC');
-    }
 
     public function attendances_training_sessions():BelongsToMany
     {

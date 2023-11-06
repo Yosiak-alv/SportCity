@@ -8,7 +8,6 @@ use App\Http\Requests\User\ClientSystemCreateEditRequest;
 use App\Http\Requests\User\ClientTrainingSessionCreateRequest;
 use App\Http\Requests\User\CreateClientPurchaseRequest;
 use App\Http\Requests\User\CreateEditSuscriptionClient;
-use App\Models\CashTransaction;
 use App\Models\Gym;
 use App\Models\Plan;
 use App\Models\Product;
@@ -16,57 +15,22 @@ use App\Models\Purchase;
 use App\Models\Suscription;
 use App\Models\System;
 use App\Models\TrainingSession;
+use App\Traits\ClientTrait;
 use Carbon\Carbon;
+use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use App\Models\Client;
 
 class UserClientController extends Controller
 {
-
+    use ClientTrait;
     public function __construct()
     {
         $this->authorizeResource(Client::class,'client');
     }
 
-    protected function resourceAbilityMap(): array
-    {
-        return array_merge(parent::resourceAbilityMap(), [
-            // method in Controller => method in Policy
-            'restore' => 'restore',
-
-            'createSystem' => 'createSystem',
-            'storeSystem' => 'createSystem',
-            'editSystem' => 'updateSystem',
-            'updateSystem' => 'updateSystem',
-            'destroySystem' => 'deleteSystem',
-
-            'createSuscription' => 'createSuscription',
-            'storeSuscription' => 'createSuscription',
-            'showSuscription' => 'showSuscription',
-            'cancelSuscription' => 'cancelSuscription',
-            'suscriptionInvoice' => 'suscriptionInvoice',
-
-            'assignAttendance' => 'assignAttendance',
-            'storeAttendance' => 'assignAttendance',
-            'attendaceShow' => 'attendaceShow',
-            'registerAttendanceDate' => 'registerAttendanceDate',
-            'destroyAttendace' => 'destroyAttendace',
-
-            'createPurchase' => 'createPurchase',
-            'storePurchase' => 'createPurchase',
-            'showPurchase' => 'showPurchase'
-        ]);
-    }
-
-    protected function resourceMethodsWithoutModels(): array
-    {
-        return array_merge(parent::resourceMethodsWithoutModels(), [
-            // method in Controller
-            /* 'addToOrder',
-            'removeFromOrder', */
-        ]);
-    }
     /**
      * Display a listing of the resource.
      * Flash messages -> in get request flash.level => '', in post, patch, put, delete only level =>''
@@ -96,8 +60,8 @@ class UserClientController extends Controller
     public function store(ClientCreateEditRequest $request)
     {
         $attr = $request->validated();
-        $result = array_merge($attr,['password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi']);
-        $client = Client::create($result);
+        $attr['password'] = Hash::make($attr['dui']);
+        $client = Client::create($attr);
 
         return to_route('clients.show',$client->id)->with([
             'level' => 'success',
@@ -111,7 +75,7 @@ class UserClientController extends Controller
     public function show(Client $client)
     {
         return Inertia::render('User/User_Client/Show',[
-            'client' => $client->load(['suscriptions.plan','purchases','system_client','gym.department','cashTransactions']),
+            'client' => $client->load(['suscriptions.plan','purchases','system_client','gym.department']),
             'client_attendance_training_sessions' => $client->attendances_training_sessions()->when(\Illuminate\Support\Facades\Request::input('search') ?? false, function($query , $search) {
                 $query->where(fn($query) =>
                     $query->where('name','like','%'.$search.'%')
@@ -148,7 +112,21 @@ class UserClientController extends Controller
             'message' => 'Client Updated Succesfully!'
         ]);
     }
+    public function updatePassword(Request $request,Client $client)
+    {
+        $attr = $request->validate([
+            'password' => ['required', Password::default()->min(8), 'confirmed'],
+        ]);
 
+        $client->update([
+            'password' => Hash::make($attr['password']),
+        ]);
+
+        return back()->with([
+            'level' => 'success',
+            'message' => 'Client Password has been Reseted Succesfully!'
+        ]);
+    }
     /**
      * Remove the specified resource from storage.
      */
@@ -247,23 +225,13 @@ class UserClientController extends Controller
             'ends_at' => Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
         ]);
 
-        $suscription = Suscription::create([
+        Suscription::create([
             'client_id' => $request['client_id'],
             'plan_id' => $request['plan_id'],
             'user_id' => $request['user_id'],
             'ends_at' => $request['ends_at']
         ]);
  
-        //cash
-        $transaction = [
-            'client_id' => $request['client_id'],
-            'mensaje' => 'Pago Realizado con Exito, Para ' . Plan::where('id',$request['plan_id'])->pluck('name')->first(),
-            'formaPago' => 'Efectivo',
-            'monto' => Plan::where('id',$request['plan_id'])->pluck('price')->first(),
-            'suscription_id' => $suscription->id
-        ];
-        CashTransaction::create($transaction);
-
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
             'message' => 'Client Suscription Created Succesfully!'
@@ -275,7 +243,6 @@ class UserClientController extends Controller
         return Inertia::render('User/User_Client/Partials/Client_Suscription/ClientSuscriptionShow',[
             'client' => $client->makeHidden(['genre','birth_date','height','weight','email_verified_at','created_at','updated_at']),
             'suscription' => Suscription::with(['plan'])->find($id),
-            'transaction' => (CashTransaction::where('suscription_id',$id)->first()),
         ]);
     }
     public function cancelSuscription(Client $client,int $id)
@@ -283,10 +250,6 @@ class UserClientController extends Controller
         $suscription = Suscription::find($id);
         $suscription->canceled = true;
         $suscription->save();
-
-        $trasaction = (CashTransaction::where('suscription_id',$id)->first());
-        $trasaction->canceled = true;
-        $trasaction->save();
 
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
@@ -298,7 +261,6 @@ class UserClientController extends Controller
     {
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('suscription-invoice',[
             'client' => $client,
-            'transaction' => (CashTransaction::where('suscription_id',$id)->first()),
             'suscription' => Suscription::find($id),
         ]);
 
@@ -415,15 +377,6 @@ class UserClientController extends Controller
         $purchase->total = round($purchase->sub_total + $purchase->taxes,2);
         $purchase->save();
 
-        $transaction = [
-            'client_id' => $client->id,
-            'mensaje' => 'Compra Realizada con Exito.',
-            'formaPago' => 'Efectivo',
-            'monto' => $purchase->total,
-            'purchase_id' => $purchase->id
-        ];
-        CashTransaction::create($transaction);
-
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
             'message' => 'Client Purchase Created Succesfully!'
@@ -435,7 +388,6 @@ class UserClientController extends Controller
         return Inertia::render('User/User_Client/Partials/Client_Purchase/ClientPurchaseShow',[
             'client' => $client->makeHidden(['genre','birth_date','height','weight','email_verified_at','created_at','updated_at']),
             'purchase' => Purchase::with(['purchaseItems.product'])->find($id), 
-            'transaction' => (CashTransaction::where('purchase_id',$id)->first()),
         ]);
     }
     public function cancelPurchase(Client $client,int $id)
@@ -444,10 +396,6 @@ class UserClientController extends Controller
         $purchase = Purchase::find($id);
         $purchase->canceled = true;
         $purchase->save();
-       
-        $trasaction = (CashTransaction::where('purchase_id',$id)->first());
-        $trasaction->canceled = true;
-        $trasaction->save();
 
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
@@ -458,7 +406,6 @@ class UserClientController extends Controller
     {
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('purchase-invoice',[
             'client' => $client,
-            'transaction' => (CashTransaction::where('purchase_id',$id)->first()),
             'purchase' => Purchase::with('purchaseItems.product')->find($id),
         ]);
         return $pdf->download('purchase-invoice.pdf');
