@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     use UserTrait;
@@ -23,8 +25,9 @@ class UserController extends Controller
      */
     public function index()
     {
+        //dd(Permission::all());
         return Inertia::render('User/Users/Index',[
-            'users' => User::select(['id','dui','name','lastname','phone','deleted_at'])->latest('created_at')->where('gym_id',request()->user()->gym_id)
+            'users' => User::with(['roles:id,name'])->select(['id','dui','name','lastname','deleted_at'])->latest('created_at')
             ->filter(request(['search','trashed']))->paginate(5)->withQueryString(),
             'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed']),
         ]);
@@ -36,7 +39,8 @@ class UserController extends Controller
     public function create()
     {
         return Inertia::render('User/Users/CreateEditUser',[
-            'gyms' => Gym::all(['id','name'])
+            'gyms' => Gym::all(['id','name']),
+            'roles' => Role::all(['id','name']),
         ]);
     }
 
@@ -45,8 +49,10 @@ class UserController extends Controller
      */
     public function store(CreateEditUserRequest $request)
     {
-        $user = User::create($request->validated());
-        
+        $user = User::create($request->validatedUser());
+        $roles = Role::whereIn('id', $request->validatedRolesIds())->get(); // Retrieve Role objects based on role IDs
+        $user->syncRoles($roles);
+
         return redirect()->route('users.show',$user->id)->with([
             'level' => 'success',
             'message' => 'User Created Succesfully!'
@@ -58,7 +64,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return Inertia::render('User/Users/Show',['user'=> $user->load(['gym.department'])]);
+        return Inertia::render('User/Users/Show',['user'=> $user->load(['gym.department','roles.permissions'])]);
     }
 
     /**
@@ -66,7 +72,12 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return Inertia::render('User/Users/CreateEditUser',['user'=> $user, 'gyms' => Gym::all(['id','name'])]);
+        return Inertia::render('User/Users/CreateEditUser',[
+            'user'=> $user, 
+            'gyms' => Gym::all(['id','name']), 
+            'roles' => Role::all(['id','name']),
+            'selected_roles' => $user->roles->pluck('id')->toArray(),
+        ]);
     }
 
     /**
@@ -74,14 +85,16 @@ class UserController extends Controller
      */
     public function update(CreateEditUserRequest $request, User $user)
     {
-        $user->update($request->validated());
+        $user->update($request->validatedUser());
+        $roles = Role::whereIn('id', $request->validatedRolesIds())->get(); // Retrieve Role objects based on role IDs
+        $user->syncRoles($roles);
 
         return redirect()->route('users.show',$user->id)->with([
             'level' => 'success',
             'message' => 'User Updated Succesfully!'
         ]);
     }
-    public function updatePassword(Request $request,User $user)
+    public function updatePassword(Request $request, User $user)
     {
         $attr = $request->validate([
             'password' => ['required', Password::default()->min(8), 'confirmed'],

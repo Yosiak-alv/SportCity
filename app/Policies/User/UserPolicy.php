@@ -12,7 +12,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('view users');
+        return $user->hasRole('administrator') && $user->hasPermissionTo('view users');
     }
 
     /**
@@ -20,7 +20,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->hasPermissionTo('view users') ;
+        return $user->hasRole('administrator') && $user->hasPermissionTo('view users') ;
     }
 
     /**
@@ -28,7 +28,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('create user');
+        return $user->hasRole('administrator') && $user->hasPermissionTo('create user');
     }
 
     /**
@@ -36,7 +36,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return ($model->trashed() ? false: $user->hasPermissionTo('edit user'));
+        return ($model->trashed() ? false: $user->hasRole('administrator') && $user->hasPermissionTo('edit user'));
     }
     public function updatePassword(User $user, User $model): bool
     {
@@ -47,7 +47,8 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return ($model->trashed() ? false: ($user->hasPermissionTo('delete user') && ($user->id != $model->id)));
+        dd($model->trashed() ? false: ($user->hasRole('administrator') && $user->hasPermissionTo('delete user') && ($user->id != $model->id)));
+        return ($model->trashed() ? false: ($user->hasRole('administrator') && $user->hasPermissionTo('delete user') && ($user->id != $model->id)));
     }
 
     /**
@@ -55,7 +56,7 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->hasPermissionTo('restore user');
+        return $user->hasRole('administrator') && $user->hasPermissionTo('restore user');
     }
 
     /**

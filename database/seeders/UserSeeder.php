@@ -4,6 +4,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 
 class UserSeeder extends Seeder
@@ -13,8 +14,12 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(8)->create();
-
+        //Role::all()->pluck('name');
+        $roles = Role::all()->pluck('name');
+        User::factory(8)->create()->each(function ($user) use ($roles){
+            $user->assignRole($roles->random(rand(1,$roles->count())));
+        });
+        
         $user= User::factory()->create([
             'dui' => '06357872-9',
             'name' => 'Josias Isaac',

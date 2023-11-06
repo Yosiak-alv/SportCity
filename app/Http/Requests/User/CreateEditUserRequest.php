@@ -29,8 +29,19 @@ class CreateEditUserRequest extends FormRequest
             'lastname' => ['required','max:255'],
             'gym_id' => ['required','numeric','gt:0','exists:gyms,id'],
             'phone' => ['required','regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/'],
-            'email' => ['required','email', 'max:255', Rule::unique('clients','email')->ignore($this->user?->id)],
+            'email' => ['required','email', 'max:255', Rule::unique('users','email')->ignore($this->user?->id)],
             'password' => [Password::default()->min(8), Rule::requiredIf($this->user?->id == null)],
+
+            'roles_id' => ['required','array'],
+            'roles_id.*' => ['numeric','gt:0','exists:roles,id'],
         ];
+    }
+    public function validatedUser(): array
+    {
+        return $this->only('dui','name','lastname','gym_id','phone','email','password');
+    }
+    public function validatedRolesIds(): array 
+    {
+        return $this->only('roles_id')['roles_id'];
     }
 }

@@ -77,8 +77,9 @@ class User extends Authenticatable
                 $query->where('name','like','%'.$search.'%')
                     ->orWhere('lastname','like','%'.$search.'%')
                     ->orWhere('dui','like','%'.$search.'%')
-                    ->orWhere('phone','like','%'.$search.'%')
-            );
+            )->orWhereHas('roles', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            });
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'with') {
                 $query->withTrashed();
