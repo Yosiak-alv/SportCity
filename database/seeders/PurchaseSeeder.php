@@ -46,11 +46,5 @@ class PurchaseSeeder extends Seeder
             $purchase->total =  $purchase->taxes + $sub_total;
             $purchase->save();
         });
-
-        CashTransaction::factory(count($purchases))->sequence(fn($sqn)=>[
-            'client_id' => $purchases[$sqn->index]->client_id,
-            'purchase_id' => $purchases[$sqn->index]->id,
-            'monto' => $purchases[$sqn->index]->total,
-        ])->create();
     }
 }
