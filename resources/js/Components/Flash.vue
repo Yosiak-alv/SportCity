@@ -26,8 +26,17 @@ const show = ref(true);
 const level = computed(() => usePage().props.flash?.level || 'success');
 const message = computed(() => usePage().props.flash?.message || '');
 
+/* watch(message, async () => {
+  show.value = true;
+}); */
 watch(message, async () => {
   show.value = true;
+  // Add a timeout to hide the component after 5 seconds (5000 milliseconds)
+  setTimeout(() => {
+    show.value = false;
+    usePage().props.flash.level = null;
+    usePage().props.flash.message = null;
+  }, 5000);
 });
 </script>
 
