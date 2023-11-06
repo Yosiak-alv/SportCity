@@ -106,7 +106,7 @@ const update = (id) => {
                                 required
                             >
                                 <option v-for="gym in props.gyms" :value="gym.id" :key="gym.id">
-                                    {{gym.name}} , {{gym.department.name}}
+                                    {{gym.name}}
                                 </option>
                             </select>
 

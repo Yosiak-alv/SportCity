@@ -7,8 +7,10 @@ use App\Models\Coach;
 use App\Models\Gym;
 use App\Models\TrainingSession;
 use App\Traits\CoachTrait;
+use Hash;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 class CoachController extends Controller
 {
@@ -45,11 +47,28 @@ class CoachController extends Controller
      */
     public function store(CreateEditCoachRequest $request)
     {
-        $coach = Coach::create($request->validated());
+        $attr = $request->validated();
+        $attr['password'] = Hash::make($attr['dui']);
+        $coach = Coach::create($attr);
 
         return redirect()->route('coaches.show',$coach->id)->with([
             'level' => 'success',
             'message' => 'Coach Created Succesfully!'
+        ]);
+    }
+    public function updatePassword(Request $request,Coach $coach)
+    {
+        $attr = $request->validate([
+            'password' => ['required', Password::default()->min(8), 'confirmed'],
+        ]);
+
+        $coach->update([
+            'password' => Hash::make($attr['password']),
+        ]);
+
+        return back()->with([
+            'level' => 'success',
+            'message' => 'Coach Password has been Reseted Succesfully!'
         ]);
     }
 

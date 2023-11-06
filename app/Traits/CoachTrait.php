@@ -10,6 +10,7 @@ trait CoachTrait {
             // method in Controller => method in Policy
             'restore' => 'restore',
             'showTrainingSession' => 'showTrainingSession',
+            'updatePassword' => 'updatePassword'
         ]);
     }
 

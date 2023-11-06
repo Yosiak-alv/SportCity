@@ -43,7 +43,10 @@ class CoachPolicy
     {
         return ($coach->trashed() ? false : $user->hasPermissionTo('edit coach'));
     }
-
+    public function updatePassword(User $user, Coach $coach): bool
+    {
+        return ($coach->trashed() ? false : $user->hasRole('administrator') && $user->hasPermissionTo('edit coach'));
+    }   
     /**
      * Determine whether the user can delete the model.
      */
