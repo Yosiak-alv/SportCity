@@ -55,7 +55,7 @@ class Client extends Authenticatable
     
     //FILTERSCOPE
 
-    public function scopeFilter($query , array $filters)
+    public function scopeFilter($query , array $filters, $userGymId)
     {
         $query->when($filters['search'] ?? false, function( $query, $search){
             $query->where(fn($query) =>
@@ -70,6 +70,8 @@ class Client extends Authenticatable
             } elseif ($trashed === 'only') {
                 $query->onlyTrashed();
             }
+        })->when($filters['gym'] ?? $userGymId, function ($query, $gymId) {
+            $query->where('gym_id', $gymId);
         });
     }
 

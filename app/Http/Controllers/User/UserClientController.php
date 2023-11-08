@@ -38,9 +38,10 @@ class UserClientController extends Controller
     public function index()
     {
         return Inertia::render('User/User_Client/Index',[ 
-            'clients' => Client::select(['id','dui','name','lastname','phone','deleted_at'])->latest('created_at')->where('gym_id',request()->user()->gym_id)->filter(request(['search','trashed']))
-            ->paginate(5)->withQueryString(),
-            'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed']),
+            'clients' => Client::select(['id','dui','name','lastname','gym_id','phone','deleted_at'])->latest('created_at')
+            ->filter(request(['search','trashed','gym']) ,request()->user()->gym_id)->paginate(5)->withQueryString(),
+            'gyms' => Gym::all(['id','name']),
+            'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed','gym']),
         ]);
     }
     /**
@@ -59,7 +60,11 @@ class UserClientController extends Controller
      */
     public function store(ClientCreateEditRequest $request)
     {
-        $attr = $request->validated();
+        $attr = request()->user()->hasRole('administrator') || request()->user()->hasRole('manager') ? 
+            $request->validatedClientAdmOrMang() : ($request->validatedClientUserReg());
+        if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+            $attr['gym_id'] = request()->user()->gym_id;
+        }
         $attr['password'] = Hash::make($attr['dui']);
         $client = Client::create($attr);
 
@@ -105,7 +110,12 @@ class UserClientController extends Controller
      */
     public function update(ClientCreateEditRequest $request, Client $client)
     {
-        $client->update($request->validated());
+        $attr = request()->user()->hasRole('administrator') || request()->user()->hasRole('manager') ? 
+            $request->validatedClientAdmOrMang() : ($request->validatedClientUserReg());
+        if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+            $attr['gym_id'] = request()->user()->gym_id;
+        }
+        $client->update($attr);
 
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',

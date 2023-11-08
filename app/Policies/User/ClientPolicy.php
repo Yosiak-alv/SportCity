@@ -21,8 +21,11 @@ class ClientPolicy
      */
     public function view(User $user, Client $client): bool
     {
-        //dd($user->hasPermissionTo('show client'));
-        return $user->hasPermissionTo('show client');
+        if($user->hasRole('administrator') || $user->hasRole('manager'))
+        {
+            return $user->hasPermissionTo('show client');
+        }
+        return $user->gym_id == $client->gym_id ? $user->hasPermissionTo('show client'): false;
     }
 
     /**
@@ -38,12 +41,23 @@ class ClientPolicy
      */
     public function update(User $user, Client $client): bool
     {
-        
-        return ($client->trashed() ? false : $user->hasPermissionTo('edit client'));
+        if ($client->trashed()) {
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('edit client');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('edit client');
     }
     public function updatePassword(User $user, Client $client): bool
     {
-        return ($client->trashed() ? false : $user->hasRole('administrator') &&  $user->hasPermissionTo('update client password'));
+        if ($client->trashed()) {
+            return false;
+        }
+        if ($user->hasRole('administrator')) {
+            return ($user->hasPermissionTo('update client password'));
+        }
+        return false;
     }
 
     /**
@@ -51,7 +65,13 @@ class ClientPolicy
      */
     public function delete(User $user, Client $client): bool
     {
-        return ($client->trashed() ? false : $user->hasPermissionTo('delete client'));
+        if ($client->trashed()) {
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('delete client');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('delete client');
     }
 
     /**
@@ -59,38 +79,57 @@ class ClientPolicy
      */
     public function restore(User $user, Client $client): bool
     {
-        return $user->hasPermissionTo('restore client');
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('restore client');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('restore client');
     }
 
     //CLIENT - SYSTEM 
 
     public function createSystem(User $user ,Client $client): bool
     {   
-        if($client->trashed() == false)
-        {
-            if($user->hasPermissionTo('create client_system'))
-            {
-                return !$client->system_client()->exists();
-            }
-            return false;  
+        if ($client->trashed()) { 
+            return false;
         }
-        return false;  
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('create client_system') ? !$client->system_client()->exists() : false;
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('create client_system') ? !$client->system_client()->exists() : false;
        
     }
     public function updateSystem(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false : $user->hasPermissionTo('edit client_system'));
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('edit client_system');
+        }
+        return $user->gym_id == $client->gym_id &&  $user->hasPermissionTo('edit client_system');
     }
     public function deleteSystem(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('delete client_system'));
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('delete client_system');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('delete client_system');
     }
 
     //CLIENT - SUSCRIPTION
 
     public function createSuscription(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('create client suscription'));
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('create client suscription');
+        }
+        return $user->gym_id == $client->gym_id &&  $user->hasPermissionTo('create client suscription');
     }
     public function showSuscription(User $user,Client $client): bool
     {
@@ -98,7 +137,13 @@ class ClientPolicy
     }
     public function cancelSuscription(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('cancel client suscription'));
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('cancel client suscription');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('cancel client suscription');
     }
     
     public function suscriptionInvoice(User $user,Client $client): bool
@@ -109,7 +154,13 @@ class ClientPolicy
 
     public function assignAttendance(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('assign client training_sessions'));
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('assign client training_sessions');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('assign client training_sessions');
     }
     public function attendaceShow(User $user,Client $client): bool
     {
@@ -117,18 +168,36 @@ class ClientPolicy
     }
     public function registerAttendanceDate(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('register client atendance_date training_session')); 
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('register client atendance_date training_session');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('register client atendance_date training_session');
     }
     public function destroyAttendace(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('delete client training_session'));
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('delete client training_session');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('delete client training_session');
     }
 
     //CLIENT - PURCHASE
 
     public function createPurchase(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('create client purchase'));
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('create client purchase');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('create client purchase');
     }
     public function showPurchase(User $user,Client $client): bool
     {
@@ -136,6 +205,12 @@ class ClientPolicy
     }
     public function cancelPurchase(User $user,Client $client): bool
     {
-        return ($client->trashed() ? false :  $user->hasPermissionTo('cancel client purchase'));
+        if ($client->trashed()) { 
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('cancel client purchase');
+        }
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('cancel client purchase');
     }
 }

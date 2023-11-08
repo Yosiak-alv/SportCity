@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head,Link, router,useForm} from '@inertiajs/vue3';
+import { Head,Link, router,useForm,usePage} from '@inertiajs/vue3';
+import { ref } from 'vue';
 import Card from '@/Components/Card.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -33,7 +34,6 @@ const form = useForm({
     email: props.client?.email ?? '',
     gym_id: props.client?.gym_id ?? '',
 
-    //password: props.client?.password ?? '',
 });
 
 const store = () => {
@@ -43,6 +43,16 @@ const store = () => {
 const update = (id) => {
     form.patch(route('clients.update',{id:id}));
 };
+
+//role things
+const roles = ref(usePage().props.auth.user_roles);
+
+const getRoles = (data) => {
+    return roles.value.find((role) =>
+        role.toLowerCase().includes(data)
+    ) ? true : false;
+}
+
 </script>
 
 <template>
@@ -115,7 +125,7 @@ const update = (id) => {
                             
                             <InputError class="mt-2" :message="form.errors.genre" />
                         </div>
-                        <div class="mt-1">
+                        <div class="mt-1" v-if="getRoles('administrator') || getRoles('manager')">
                             <InputLabel for="gym_id" value="Gym" />
                             <select 
                                 id="gym_id"
@@ -153,7 +163,7 @@ const update = (id) => {
                                 class="mt-1 block w-full"
                                 v-model="form.address"
                                 required
-                                autocomplete="address"
+                                rows="3"
                             />
 
                             <InputError class="mt-2" :message="form.errors.address" />

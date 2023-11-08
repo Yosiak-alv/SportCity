@@ -26,14 +26,23 @@ class ClientCreateEditRequest extends FormRequest
             'name' => ['required','max:255'],
             'lastname' => ['required','max:255'],
             'genre' => ['required','max:5'],
-            'gym_id' => ['required','gt:0','numeric',],
+            'gym_id' => [Rule::requiredIf($this->user()->hasRole('administrator') || $this->user()->hasRole('manager')),],
             'birth_date' => ['required','date'],
             'address' => ['required','min:10','string','max:5000'],
             'phone' => ['required','regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/'],
             'height' => ['required','numeric', 'gt:0'],
             'weight' => ['required','numeric', 'gt:0'],
             'email' => ['required','email', 'max:255', Rule::unique('clients','email')->ignore($this->client?->id)],
-            //'password' => ['required','string','max:255',Rule::excludeIf($this->client != null)],
         ];
+    }
+
+    public function validatedClientAdmOrMang(): array
+    {
+        return $this->only('dui','name','lastname','genre','gym_id','birth_date','address','phone','height','weight','email');
+    }
+
+    public function validatedClientUserReg(): array
+    {
+        return $this->only('dui','name','lastname','genre','birth_date','address','phone','height','weight','email');
     }
 }
