@@ -134,34 +134,34 @@ onMounted(() => {
                                             {{suscription.id}}
                                         </div>
                                     </th>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4" :class="{'text-red-600 dark:text-red-400' : suscription.client?.name == null}">
                                         <div v-if="getPermission('show suscription')">
                                             <Link  :href="route('suscriptions.show',{id:suscription.id})">
-                                                {{suscription.client.name}}
+                                               {{suscription.client?.name ?? 'Client Deleted'}}
                                             </Link>
                                         </div>
                                         <div v-else>
-                                            {{suscription.client.name}}
+                                            {{suscription.client?.name ?? 'Client Deleted'}}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div v-if="getPermission('show suscription')">
                                             <Link  :href="route('suscriptions.show',{id:suscription.id})">
-                                                {{suscription.plan.name}}
+                                                {{suscription.plan?.name ?? 'Plan Deleted'}}
                                             </Link>
                                         </div>
                                         <div v-else>
-                                            {{suscription.plan.name}}
+                                            {{suscription.plan?.name ?? 'Plan Deleted'}}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div v-if="getPermission('show suscription')">
                                             <Link :href="route('suscriptions.show',{id:suscription.id})">
-                                                {{suscription.plan.price}}
+                                                {{suscription.plan?.price ?? 'Plan Deleted'}}
                                             </Link>
                                         </div>
                                         <div v-else>
-                                            {{suscription.plan.price}}
+                                            {{suscription.plan?.price ?? 'Plan Deleted'}}
                                         </div>
                                         
                                     </td>
