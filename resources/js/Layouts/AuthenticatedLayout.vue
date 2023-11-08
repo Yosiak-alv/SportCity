@@ -48,6 +48,9 @@ const getPermission = (data) => {
                                 <NavLink :href="route('users.index')" :active="route().current('users.index')" v-if="getPermission('view users')">
                                     Users
                                 </NavLink>
+                                <NavLink :href="route('gyms.index')" :active="route().current('gyms.index')" v-if="getPermission('view gyms')">
+                                    Gyms
+                                </NavLink>
                                 <NavLink :href="route('training-sessions.index')" :active="route().current('training-sessions.index')" v-if="getPermission('view training sessions')">
                                     Training Sessions
                                 </NavLink>
@@ -146,6 +149,12 @@ const getPermission = (data) => {
                         <ResponsiveNavLink :href="route('coaches.index')" :active="route().current('coaches.index')" v-if="getPermission('view coaches')">
                             Coaches
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('users.index')" :active="route().current('users.index')" v-if="getPermission('view users')">
+                            Users
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('gyms.index')" :active="route().current('gyms.index')" v-if="getPermission('view gyms')">
+                            Gyms
+                        </ResponsiveNavLink >
                         <ResponsiveNavLink :href="route('training-sessions.index')" :active="route().current('training-sessions.index')" v-if="getPermission('view training sessions')">
                             Training Sessions
                         </ResponsiveNavLink>
