@@ -32,6 +32,20 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        if (!Auth::user()->hasRole('administrator') && Auth::user()->gym == null) {
+            
+            Auth::guard('web')->logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            //dd('deslogeado');
+            return redirect()->route('homepage')->with([
+                'level' => 'danger',
+                'message' => 'This user is not available to login as the gym is neither available'
+            ]);
+        }
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard'));

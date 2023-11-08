@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\User\ClientSystemController;
 use App\Http\Controllers\User\CoachController;
 use App\Http\Controllers\User\ExerciseController;
+use App\Http\Controllers\User\GymController;
 use App\Http\Controllers\User\PlanController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ProfileController;
@@ -100,6 +101,10 @@ Route::middleware('auth')->group(function () {
 
     //USERS - PLANS
     Route::resource('/plans',PlanController::class)->except(['index']);
+
+    //GYM
+    Route::resource('/gyms',GymController::class);
+    Route::post('gyms/{gym}/restore',[GymController::class,'restore'])->name('gyms.restore');
 }); 
 
 
