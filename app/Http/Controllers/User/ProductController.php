@@ -8,30 +8,17 @@ use App\Http\Requests\User\CreateEditProductRequest;
 use App\Models\Department;
 use App\Models\Gym;
 use App\Models\Product;
+use App\Traits\ProductTrait;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 class ProductController extends Controller
 {
-
+    use ProductTrait;
     public function __construct()
     {
         $this->authorizeResource(Product::class,'product');
     }
 
-    protected function resourceAbilityMap(): array
-    {
-        return array_merge(parent::resourceAbilityMap(), [
-            // method in Controller => method in Policy
-            'restore' => 'restore',
-        ]);
-    }
-
-    protected function resourceMethodsWithoutModels(): array
-    {
-        return array_merge(parent::resourceMethodsWithoutModels(), [
-            // method in Controller
-        ]);
-    }
     /**
      * Display a listing of the resource.
      */
