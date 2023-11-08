@@ -263,13 +263,13 @@ const form = useForm({
                 <div class="bg-gray-900 relative flex flex-wrap py-6 rounded shadow-md">
                     <div class="lg:w-1/2 px-6">
                         <h2 class="title-font font-semibold text-white tracking-widest text-xs">ADDRESS</h2>
-                        <p class="mt-1">{{gym.address}}</p>
+                        <p class="mt-1">{{gym?.address}}</p>
                     </div>
                     <div class="lg:w-1/2 px-6 mt-4 lg:mt-0">
                         <h2 class="title-font font-semibold text-white tracking-widest text-xs">EMAIL</h2>
-                        <a class="text-green-500 leading-relaxed">{{gym.email}}</a>
+                        <a class="text-green-500 leading-relaxed">{{gym?.email}}</a>
                         <h2 class="title-font font-semibold text-white tracking-widest text-xs mt-4">PHONE</h2>
-                        <p class="leading-relaxed">{{gym.phone}}</p>
+                        <p class="leading-relaxed">{{gym?.phone}}</p>
                     </div>
                 </div>
             </div>
