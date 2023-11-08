@@ -119,9 +119,9 @@ const getPermission = (data) => {
                             <br>
                             <span class="font-semibold">Email:</span> {{ user.email }}
                             <br>
-                            <span class="font-semibold">Gym:</span> {{ user.gym.name }}
+                            <span class="font-semibold">Gym:</span> {{ user.gym?.name }}
                             <br>
-                            <span class="font-semibold">Gym Address:</span> {{user.gym.department.name}}, {{ user.gym.address }}
+                            <span class="font-semibold">Gym Address:</span> {{user.gym?.department.name}}, {{ user.gym?.address }}
                             <br>
                             <span v-if="props.user.deleted_at" class="font-semibold">Deleted at:</span> {{props.user.deleted_at}}
                         </div>
