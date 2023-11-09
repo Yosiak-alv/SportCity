@@ -8,6 +8,7 @@ use App\Http\Controllers\User\GymController;
 use App\Http\Controllers\User\PlanController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\User\SuscriptionController;
 use App\Http\Controllers\User\TrainingSessionController;
 use App\Http\Controllers\User\UserClientController;
@@ -93,6 +94,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/users',UserController::class);
     Route::patch('users/{user}/update-password',[UserController::class,'updatePassword'])->name('users.updatePassword');
     Route::post('users/{user}/restore',[UserController::class,'restore'])->name('users.restore');
+
+    Route::resource('/roles',RoleController::class)->except(['index']);
 
     //USERS - SUSCRIPTIONS
     Route::resource('/suscriptions',SuscriptionController::class);

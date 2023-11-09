@@ -8,6 +8,7 @@ use App\Models\Coach;
 use App\Models\Product;
 use App\Models\System;
 use App\Models\TrainingSession;
+use App\Policies\User\RolePolicy;
 use App\Policies\User\CoachPolicy;
 use App\Policies\User\ClientPolicy;
 use App\Policies\User\ProductPolicy;
@@ -15,6 +16,7 @@ use App\Models\User;
 use App\Policies\User\UserPolicy;
 use App\Policies\User\TrainingSessionPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Spatie\Permission\Models\Role;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,7 @@ class AuthServiceProvider extends ServiceProvider
         Coach::class => CoachPolicy::class,
         TrainingSession::class => TrainingSessionPolicy::class,
         User::class => UserPolicy::class,
+        Role::class => RolePolicy::class,
     ];
 
     /**

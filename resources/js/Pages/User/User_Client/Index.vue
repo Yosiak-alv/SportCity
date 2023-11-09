@@ -184,6 +184,9 @@ const getRoles = (data) => {
                                         </div>
                                     </td>
                                 </tr>
+                                <tr v-if="props.clients.data.length === 0">
+                                    <td class="px-6 py-4 font-medium text-gray-200 whitespace-nowrap" colspan="4">No Clients found.</td>
+                                </tr>
                             </slot>
                         </Table>
                     </div>

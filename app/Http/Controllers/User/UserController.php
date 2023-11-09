@@ -29,6 +29,7 @@ class UserController extends Controller
         return Inertia::render('User/Users/Index',[
             'users' => User::with(['roles:id,name'])->select(['id','dui','name','lastname','deleted_at'])->latest('created_at')
             ->filter(request(['search','trashed']))->paginate(5)->withQueryString(),
+            'roles' => Role::all(),
             'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed']),
         ]);
     }
