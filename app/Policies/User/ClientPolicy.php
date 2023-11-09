@@ -21,6 +21,7 @@ class ClientPolicy
      */
     public function view(User $user, Client $client): bool
     {
+        //dd($client->gym()->exists());
         if($user->hasRole('administrator') || $user->hasRole('manager'))
         {
             return $user->hasPermissionTo('show client');
