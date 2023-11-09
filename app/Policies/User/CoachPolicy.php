@@ -21,7 +21,11 @@ class CoachPolicy
      */
     public function view(User $user, Coach $coach): bool
     {
-        return $user->hasPermissionTo('show coach');
+        if($user->hasRole('administrator') || $user->hasRole('manager'))
+        {
+            return $user->hasPermissionTo('show coach');
+        }
+        return $user->gym_id == $coach->gym_id ? $user->hasPermissionTo('show coach'): false;
     }
     public function showTrainingSession(User $user): bool
     {
@@ -41,10 +45,17 @@ class CoachPolicy
      */
     public function update(User $user, Coach $coach): bool
     {
-        return ($coach->trashed() ? false : $user->hasPermissionTo('edit coach'));
+        if ($coach->trashed()) {
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('edit coach');
+        }
+        return $user->gym_id == $coach->gym_id && $user->hasPermissionTo('edit coach');
     }
     public function updatePassword(User $user, Coach $coach): bool
     {
+        
         return ($coach->trashed() ? false : $user->hasRole('administrator') && $user->hasPermissionTo('edit coach'));
     }   
     /**
@@ -52,7 +63,13 @@ class CoachPolicy
      */
     public function delete(User $user, Coach $coach): bool
     {
-        return ($coach->trashed() ? false : $user->hasPermissionTo('delete coach'));
+        if ($coach->trashed()) {
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return  $user->hasPermissionTo('delete coach');
+        }
+        return $user->gym_id == $coach->gym_id &&  $user->hasPermissionTo('delete coach');
     }
 
     /**
@@ -60,7 +77,10 @@ class CoachPolicy
      */
     public function restore(User $user, Coach $coach): bool
     {
-        return $user->hasPermissionTo('restore coach');
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('restore coach');
+        }
+        return $user->gym_id == $coach->gym_id && $user->hasPermissionTo('restore coach');
     }
 
     /*

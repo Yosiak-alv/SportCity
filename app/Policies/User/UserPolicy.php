@@ -47,7 +47,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        dd($model->trashed() ? false: ($user->hasRole('administrator') && $user->hasPermissionTo('delete user') && ($user->id != $model->id)));
+        //dd($model->trashed() ? false: ($user->hasRole('administrator') && $user->hasPermissionTo('delete user') && ($user->id != $model->id)));
         return ($model->trashed() ? false: ($user->hasRole('administrator') && $user->hasPermissionTo('delete user') && ($user->id != $model->id)));
     }
 
