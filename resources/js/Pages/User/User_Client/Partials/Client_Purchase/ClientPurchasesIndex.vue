@@ -68,7 +68,7 @@ const getPermission = (data) => {
                     :href="route('clients.createPurchase',props.clientId)"
                     method="get" as="button"
                     class=" mr-4 mt-5 inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
-                    v-if="props.deleted == false"
+                    v-if="props.deleted == false && getPermission('create client purchase')"
                 >
                     Create Purchase
                 </Link>
@@ -138,7 +138,7 @@ const getPermission = (data) => {
                     :href="route('clients.createPurchase',props.clientId)"
                     method="get" as="button"
                     class=" ml-8 mt-3 inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
-                    v-if="props.deleted == false"
+                    v-if="props.deleted == false && getPermission('create client purchase')"
                 >
                     Create Purchase
                 </Link>
