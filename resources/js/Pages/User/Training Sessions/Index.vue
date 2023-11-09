@@ -1,7 +1,7 @@
 <script setup>
 import Card from '@/Components/Card.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head,Link, router, usePage} from '@inertiajs/vue3';
+import { Head,Link, router, usePage,useForm} from '@inertiajs/vue3';
 import {ref, watch, onMounted} from "vue";
 import $ from 'jquery';
 import DataTable from 'datatables.net-dt';
@@ -13,6 +13,10 @@ const props = defineProps({
         type:Object,
         required:true
     },
+    gyms:{
+        type:Object,
+        required:true
+    },
     exercises:{
         type:Object,
         required:true
@@ -21,11 +25,13 @@ const props = defineProps({
         type:Object
     },
 });
-
-const search = ref(props.filters.search);
+const form = useForm({
+    search: props.filters.search,
+    gym: props.filters.gym,
+});
 //search Handling
-watch(search, debounce((value) => {
-    router.get(route('training-sessions.index'), {search:value}, { preserveState:true , replace:true ,preserveScroll:true});
+watch(form, debounce(() => {
+    router.get(route('training-sessions.index'), {search:form.search, gym: form.gym}, { preserveState:true , replace:true ,preserveScroll:true});
 },500));
 
 const permissions = ref(usePage().props.auth.user_role_permissions);
@@ -35,7 +41,14 @@ const getPermission = (data) => {
         permission.toLowerCase().includes(data)
     ) ? true : false;
 }
+//role things
+const roles = ref(usePage().props.auth.user_roles);
 
+const getRoles = (data) => {
+    return roles.value.find((role) =>
+        role.toLowerCase().includes(data)
+    ) ? true : false;
+}
 const shortDescript = (description) => {
     return description.substring(0, 30) + '...';
 }
@@ -75,11 +88,22 @@ onMounted(() => {
                     <div>
                         <div class="relative w-full ml-6">
                             <div class="flex flex-row space-x-2">
+                                <div v-if="getRoles('administrator') || getRoles('manager')">
+                                    <div class="mr-4 w-full max-w-md">
+                                        <select v-model="form.gym" id="gym" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500">
+                                            <option :value="null" />
+
+                                            <option v-for="gym in props.gyms" :value="gym.id" :key="gym.id">
+                                                {{gym.name}} 
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div>
                                     <div class="absolute inset-y-0 left-29  flex items-center pl-3 pointer-events-none">
                                         <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
                                     </div>
-                                    <input type="text" id="search" v-model="search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search" required>
+                                    <input type="text" id="search" v-model="form.search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Search" required>
                                 </div>
                             </div>
                             

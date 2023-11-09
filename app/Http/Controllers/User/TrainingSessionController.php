@@ -27,18 +27,11 @@ class TrainingSessionController extends Controller
     public function index()
     {
         return Inertia::render('User/Training Sessions/Index',[
-            'training_sessions' => TrainingSession::select(['id','name','description','duration','starts_at','finish_at'])->latest('created_at')->where('gym_id',request()->user()->gym_id)
-            ->when(\Illuminate\Support\Facades\Request::input('search') ?? false, function($query , $search) {
-                $query->where(fn($query) =>
-                    $query->where('name','like','%'.$search.'%')
-                        ->orWhere('description','like','%'.$search.'%')
-                        ->orWhere('duration','like','%'.$search.'%')
-                        ->orWhere('starts_at','like','%'.$search.'%')
-                        ->orWhere('finish_at','like','%'.$search.'%')
-                );
-            })->paginate(8)->withQueryString(),
+            'training_sessions' => TrainingSession::select(['id','name','description','duration','starts_at','finish_at'])->latest('created_at')
+            ->filter(request(['search','gym']), request()->user()->gym_id)->paginate(8)->withQueryString(),
+            'gyms' => Gym::all(['id','name']),
             'exercises' => Exercise::all(['id','name','instructions' ,'created_at','updated_at']),
-            'filters' => \Illuminate\Support\Facades\Request::only(['search']),
+            'filters' => \Illuminate\Support\Facades\Request::only(['search'.'gym']),
         ]);
     }
 

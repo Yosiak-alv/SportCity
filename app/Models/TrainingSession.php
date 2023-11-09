@@ -34,4 +34,19 @@ class TrainingSession extends Model
     {
         return $this->belongsToMany(Coach::class,'training_sessions_coaches');
     }
+
+    public function scopeFilter($query , array $filters, $userGymId)
+    {
+        $query->when($filters['search'] ?? false, function( $query, $search){
+            $query->where(fn($query) =>
+                $query->where('name','like','%'.$search.'%')
+                    ->orWhere('description','like','%'.$search.'%')
+                    ->orWhere('duration','like','%'.$search.'%')
+                    ->orWhere('starts_at','like','%'.$search.'%')
+                    ->orWhere('finish_at','like','%'.$search.'%')
+            );
+        })->when($filters['gym'] ?? $userGymId, function ($query, $gymId) {
+            $query->where('gym_id', $gymId);
+        });
+    }
 }
