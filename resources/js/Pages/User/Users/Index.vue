@@ -177,13 +177,13 @@ onMounted(() => {
                                         <div v-if="getPermission('show user')">
                                             <Link :href="route('users.show',{id:user.id})">
                                                 <div v-for="role in user.roles">
-                                                    {{role.name}}<br>
+                                                    {{role?.name}}<br>
                                                 </div>
                                             </Link>
                                         </div>
                                         <div v-else>
                                             <div v-for="role in user.roles">
-                                                {{role.name}}<br>
+                                                {{role?.name}}<br>
                                             </div>
                                         </div>
                                         

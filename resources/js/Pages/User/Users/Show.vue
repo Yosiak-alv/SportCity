@@ -119,9 +119,10 @@ const getPermission = (data) => {
                             <br>
                             <span class="font-semibold">Email:</span> {{ user.email }}
                             <br>
-                            <span class="font-semibold">Gym:</span> {{ user.gym?.name }}
+                            <span class="font-semibold">Gym:</span> <span :class="{'text-red-600 dark:text-red-400' : user.gym == null}">
+                            {{ user.gym?.name ?? 'Current Gym Deleted'}} </span>
                             <br>
-                            <span class="font-semibold">Gym Address:</span> {{user.gym?.department.name}}, {{ user.gym?.address }}
+                            <span class="font-semibold">Gym Address:</span> {{user.gym?.department.name ?? ''}}, {{ user.gym?.address ?? ''}}
                             <br>
                             <span v-if="props.user.deleted_at" class="font-semibold">Deleted at:</span> {{props.user.deleted_at}}
                         </div>
@@ -149,12 +150,12 @@ const getPermission = (data) => {
         </div>
 
         <div class="py-2">
-            <div class="max-w-7xl mx-auto text-center my-4 text-gray-900 dark:text-gray-100">
-                <h2 class="text-3xl font-semibold">Roles Permission</h2>
+            <div class="max-w-7xl mx-auto text-center my-4 text-gray-900 dark:text-gray-100" :class="{'text-red-600 dark:text-red-400' : props.user.roles.length == 0}">
+                <h2 class="text-3xl font-semibold">{{user.roles.length == 0 ? 'Current Role Deleted !!!' : 'Role Permissions'}}</h2>
             </div>
 
             <div class="mt-4">
-                <div class="flex justify-center">
+                <div class="flex justify-center" v-if="props.user.roles.length != 0">
                     <div v-for="role in props.user.roles" :key="role.id">
                         <div class="flex flex-col mb-4">
                             <Card class="">
