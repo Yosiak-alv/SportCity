@@ -22,7 +22,11 @@ class ProductPolicy
      */
     public function view(User $user, Product $product): bool
     {
-        return $user->hasPermissionTo('show product');
+        if($user->hasRole('administrator') || $user->hasRole('manager'))
+        {
+            return $user->hasPermissionTo('show product');
+        }
+        return $user->gym_id == $product->gym_id ? $user->hasPermissionTo('show product'): false;
     }
 
     /**
@@ -38,7 +42,13 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        return ($product->trashed() ? false : $user->hasPermissionTo('edit product'));
+        if ($product->trashed()) {
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('edit product');
+        }
+        return $user->gym_id == $product->gym_id && $user->hasPermissionTo('edit product');
     }
 
     /**
@@ -46,7 +56,13 @@ class ProductPolicy
      */
     public function delete(User $user, Product $product): bool
     {
-        return ($product->trashed() ? false : $user->hasPermissionTo('delete product'));
+        if($product->trashed()) {
+            return false;
+        }
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('delete product');
+        }
+        return $user->gym_id == $product->gym_id && $user->hasPermissionTo('delete product');
     }
 
     /**
@@ -54,7 +70,10 @@ class ProductPolicy
      */
     public function restore(User $user, Product $product): bool
     {
-        return $user->hasPermissionTo('restore product');
+        if ($user->hasRole('administrator') || $user->hasRole('manager')) {
+            return $user->hasPermissionTo('restore product');
+        }
+        return $user->gym_id == $product->gym_id && $user->hasPermissionTo('restore product');
     }
 
     /**

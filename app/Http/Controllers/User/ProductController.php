@@ -25,9 +25,10 @@ class ProductController extends Controller
     public function index()
     {
         return Inertia::render('User/Products/Index',[
-            'products' => Product::select(['id','name','unit_price','quantity','deleted_at'])->latest('created_at')->where('gym_id',request()->user()->gym_id)->filter(request(['search','trashed']))
-            ->paginate(5)->withQueryString(),
-            'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed']),
+            'products' => Product::select(['id','name','unit_price','quantity','deleted_at'])->latest('created_at')
+            ->filter(request(['search','trashed','gym']), request()->user()->gym_id)->paginate(5)->withQueryString(),
+            'gyms' => Gym::all(['id','name']),
+            'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed','gym']),
         ]);
     }
 
@@ -47,8 +48,13 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(CreateEditProductRequest $request)
-    {
-        $product = Product::create($request->validated());
+    {  
+        $attr = request()->user()->hasRole('administrator') || request()->user()->hasRole('manager') ? 
+            $request->validatedAdmOrMang() : ($request->validatedUserReg());
+        if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+            $attr['gym_id'] = request()->user()->gym_id;
+        }
+        $product = Product::create($attr);
 
         return redirect()->route('products.show',$product->id)->with([
             'level' => 'success',
@@ -83,7 +89,12 @@ class ProductController extends Controller
      */
     public function update(CreateEditProductRequest $request, Product $product)
     {
-        $product->update($request->validated());
+        $attr = request()->user()->hasRole('administrator') || request()->user()->hasRole('manager') ? 
+            $request->validatedAdmOrMang() : ($request->validatedUserReg());
+        if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+            $attr['gym_id'] = request()->user()->gym_id;
+        }
+        $product->update($attr);
 
         return redirect()->route('products.show',$product->id)->with([
             'level' => 'success',

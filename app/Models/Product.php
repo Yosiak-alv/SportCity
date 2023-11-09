@@ -31,7 +31,7 @@ class Product extends Model
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
-    public function scopeFilter($query , array $filters)
+    public function scopeFilter($query , array $filters, $userGymId)
     {
         $query->when($filters['search'] ?? false, function( $query, $search){
             $query->where(fn($query) =>
@@ -45,6 +45,8 @@ class Product extends Model
             } elseif ($trashed === 'only') {
                 $query->onlyTrashed();
             }
+        })->when($filters['gym'] ?? $userGymId, function ($query, $gymId) {
+            $query->where('gym_id', $gymId);
         });
     }
 

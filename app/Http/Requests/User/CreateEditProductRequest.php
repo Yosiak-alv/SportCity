@@ -25,8 +25,16 @@ class CreateEditProductRequest extends FormRequest
             'name' => ['required','max:255',Rule::unique('products','name')->ignore($this->product)],
             'description' => ['required','min:10','string','max:5000'],
             'unit_price' => ['required', 'gt:0','numeric'],
-            'gym_id' => ['required','gt:0','numeric',],
+            'gym_id' => [Rule::requiredIf($this->user()->hasRole('administrator') || $this->user()->hasRole('manager')),],
             'quantity' => ['required', 'gt:0'],
         ];
+    }
+    public function validatedAdmOrMang(): array
+    {
+        return $this->only('name','description','unit_price','gym_id','quantity');
+    }
+    public function validatedUserReg(): array
+    {
+        return $this->only('name','description','unit_price','quantity');
     }
 }
