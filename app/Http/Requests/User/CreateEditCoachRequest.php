@@ -27,9 +27,17 @@ class CreateEditCoachRequest extends FormRequest
             'lastname' => ['required','max:255'],
             'phone' => ['required','regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/'],
             'address' => ['required','min:10','string','max:5000'],
-            'gym_id' => ['required','gt:0','numeric','exists:gyms,id'],
+            'gym_id' => [Rule::requiredIf($this->user()->hasRole('administrator') || $this->user()->hasRole('manager')),],
             'email' => ['required','email', 'max:255', Rule::unique('coaches','email')->ignore($this->coach?->id)],
             //'password' => ['required','string','max:255',Rule::excludeIf($this->client != null)],
         ];
+    }
+    public function validatedCoachAdmOrMang(): array
+    {
+        return $this->only('dui','name','lastname','phone','address','gym_id','email');
+    }
+    public function validatedCoachUserReg(): array
+    {
+        return $this->only('dui','name','lastname','phone','address','email');
     }
 }

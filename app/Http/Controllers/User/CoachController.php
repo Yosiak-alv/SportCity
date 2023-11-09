@@ -26,9 +26,10 @@ class CoachController extends Controller
     public function index()
     {
         return Inertia::render('User/Coaches/Index',[
-            'coaches' => Coach::select(['id','dui','name','lastname','phone','deleted_at'])->latest('created_at')->where('gym_id',request()->user()->gym_id)->filter(request(['search','trashed']))
-            ->paginate(5)->withQueryString(),
-            'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed']),
+            'coaches' => Coach::select(['id','dui','name','lastname','phone','deleted_at'])->latest('created_at')
+            ->filter(request(['search','trashed','gym']), request()->user()->gym_id)->paginate(5)->withQueryString(),
+            'gyms' => Gym::all(['id','name']),
+            'filters' => \Illuminate\Support\Facades\Request::only(['search','trashed','gym']),
         ]);
     }
 
@@ -47,7 +48,11 @@ class CoachController extends Controller
      */
     public function store(CreateEditCoachRequest $request)
     {
-        $attr = $request->validated();
+        $attr = request()->user()->hasRole('administrator') || request()->user()->hasRole('manager') ? 
+            $request->validatedCoachAdmOrMang() : ($request->validatedCoachUserReg());
+        if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+            $attr['gym_id'] = request()->user()->gym_id;
+        }
         $attr['password'] = Hash::make($attr['dui']);
         $coach = Coach::create($attr);
 
@@ -119,7 +124,12 @@ class CoachController extends Controller
      */
     public function update(CreateEditCoachRequest $request, Coach $coach)
     {
-        $coach->update($request->validated());
+        $attr = request()->user()->hasRole('administrator') || request()->user()->hasRole('manager') ? 
+            $request->validatedCoachAdmOrMang() : ($request->validatedCoachUserReg());
+        if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+            $attr['gym_id'] = request()->user()->gym_id;
+        }
+        $coach->update($attr);
 
         return redirect()->route('coaches.show',$coach->id)->with([
             'level' => 'success',

@@ -13,6 +13,10 @@ const props = defineProps({
         type:Object,
 
     },
+    gyms:{
+        type:Object,
+        required:true
+    },
     filters:{
         type:Object,
         required:true
@@ -21,12 +25,13 @@ const props = defineProps({
 
 const form = useForm({
     search: props.filters.search,
-    trashed:props.filters.trashed
+    trashed:props.filters.trashed,
+    gym:props.filters.gym
 });
 
 //search Handling
 watch(form, debounce(() => {
-    router.get('/coaches', {search:form.search , trashed:form.trashed}, { preserveState:true , replace:true });
+    router.get('/coaches', {search:form.search , trashed:form.trashed, gym: form.gym}, { preserveState:true , replace:true });
 },500));
 
 const permissions = ref(usePage().props.auth.user_role_permissions);
@@ -34,6 +39,14 @@ const permissions = ref(usePage().props.auth.user_role_permissions);
 const getPermission = (data) => {
     return permissions.value.find((permission) =>
         permission.toLowerCase().includes(data)
+    ) ? true : false;
+}
+//role things
+const roles = ref(usePage().props.auth.user_roles);
+
+const getRoles = (data) => {
+    return roles.value.find((role) =>
+        role.toLowerCase().includes(data)
     ) ? true : false;
 }
 
@@ -61,6 +74,17 @@ const getPermission = (data) => {
                                                     <option :value="null" />
                                                     <option value="with">With Trashed</option>
                                                     <option value="only">Only Trashed</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div v-if="getRoles('administrator') || getRoles('manager')">
+                                            <div class="mr-4 w-full max-w-md">
+                                                <select v-model="form.gym" id="gym" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500">
+                                                    <option :value="null" />
+
+                                                    <option v-for="gym in props.gyms" :value="gym.id" :key="gym.id">
+                                                        {{gym.name}} 
+                                                    </option>
                                                 </select>
                                             </div>
                                         </div>
@@ -161,6 +185,9 @@ const getPermission = (data) => {
                                             </Link>
                                         </div>
                                     </td>
+                                </tr>
+                                <tr v-if="props.coaches.data.length === 0">
+                                    <td class="px-6 py-4 font-medium text-gray-200 whitespace-nowrap" colspan="4">No Coaches found.</td>
                                 </tr>
                             </slot>
                         </Table>
