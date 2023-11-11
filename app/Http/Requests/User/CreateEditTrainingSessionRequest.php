@@ -26,7 +26,7 @@ class CreateEditTrainingSessionRequest extends FormRequest
             'name' => ['required','string','max:255', Rule::unique('training_sessions','name')->ignore($this?->training_session)],
             'description' => ['required','min:10','string','max:5000'],
             'duration' => ['required','numeric', 'gt:0','max:255'],
-            'gym_id' => ['numeric','gt:0','exists:gyms,id'],
+            'gym_id' => [Rule::requiredIf($this->user()->hasRole('administrator') || $this->user()->hasRole('manager'))],
             'user_id' => ['numeric','gt:0','exists:users,id'],
             'starts_at' => ['required','date','regex:/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/'],
             'finish_at' => ['required','date','after:starts_at','regex:/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/'],
@@ -45,9 +45,13 @@ class CreateEditTrainingSessionRequest extends FormRequest
             'repetitions*' => ['gt:0','numeric'],
         ];
     }
-    public function validatedTrainingSession(): array
+    public function validatedTrainingSessionAdmOrManger(): array
     {
-        return $this->only('name','description','duration','starts_at','finish_at','gym_id','user_id');
+        return $this->only('name','description','duration','starts_at','finish_at','gym_id');
+    }
+    public function validatedTrainingSessionUserReg(): array
+    {
+        return $this->only('name','description','duration','starts_at','finish_at');
     }
     public function validatedCoachIds()
     {

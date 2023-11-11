@@ -27,7 +27,7 @@ class Coach extends Authenticatable
     }
     public function gym(): BelongsTo
     {
-        return $this->belongsTo(Gym::class);
+        return $this->belongsTo(Gym::class,'gym_id');
     }
 
 

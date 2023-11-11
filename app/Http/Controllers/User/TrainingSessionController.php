@@ -31,7 +31,7 @@ class TrainingSessionController extends Controller
             ->filter(request(['search','gym']), request()->user()->gym_id)->paginate(8)->withQueryString(),
             'gyms' => Gym::all(['id','name']),
             'exercises' => Exercise::all(['id','name','instructions' ,'created_at','updated_at']),
-            'filters' => \Illuminate\Support\Facades\Request::only(['search'.'gym']),
+            'filters' => \Illuminate\Support\Facades\Request::only(['search','gym']),
         ]);
     }
 
@@ -39,10 +39,13 @@ class TrainingSessionController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
+    {   
         return Inertia::render('User/Training Sessions/CreateEditTrainingSession',[
-            'coaches' => Coach::select(['id','name'])->where('gym_id',request()->user()->gym_id)->get(),
-            'clients' => Client::select(['id','name','lastname'])->where('gym_id',request()->user()->gym_id)->get(),
+            'coaches' => request()->user()->hasRole(['administrator','manager']) ?
+                Coach::with(['gym:id,name'])->get() : Coach::with(['gym:id,name'])->where('gym_id',request()->user()->gym_id)->get(),
+            'clients' =>  request()->user()->hasRole(['administrator','manager']) ? Client::with(['gym:id,name'])->get() : 
+                Client::with(['gym:id,name'])->where('gym_id',request()->user()->gym_id)->get(),
+            'gyms' => request()->user()->hasRole(['administrator','manager']) ?  Gym::all(['id','name']) : null,
             'exercises' => Exercise::all(['id','name']),
         ]);
     }
@@ -52,9 +55,7 @@ class TrainingSessionController extends Controller
      */
     public function store(CreateEditTrainingSessionRequest $request)
     {
-        try{
-            $request->merge(['gym_id' => request()->user()->gym_id,'user_id' => request()->user()->id]);
-            
+        try{            
             $repetitions = collect([]);
             $attendance_dates = collect([]);
     
@@ -76,7 +77,15 @@ class TrainingSessionController extends Controller
                 }
                
             }
-            $training_session = TrainingSession::create($request->validatedTrainingSession());
+            $attr = (request()->user()->hasRole(['administrator','manager']) ? 
+                $request->validatedTrainingSessionAdmOrManger() : $request->validatedTrainingSessionUserReg());
+            $attr['user_id'] = request()->user()->id;
+            if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+                $attr['gym_id'] = request()->user()->gym_id;
+            }
+            $this->clientCoachGymValidation($request,$attr);
+
+            $training_session = TrainingSession::create($attr);
             $training_session->training_sessions_coaches()->sync($request->validatedCoachIds());
             $training_session->training_sessions_exercises()->sync($repetitions);
             $training_session->attendancesClients()->sync($attendance_dates); 
@@ -111,8 +120,11 @@ class TrainingSessionController extends Controller
     {
         return Inertia::render('User/Training Sessions/CreateEditTrainingSession',[
             'training_session' => $training_session,
-            'coaches' => Coach::select(['id','name'])->where('gym_id',request()->user()->gym_id)->get(),
-            'clients' => Client::select(['id','name','lastname'])->where('gym_id',request()->user()->gym_id)->get(),
+            'coaches' => request()->user()->hasRole(['administrator','manager']) ?
+                Coach::with(['gym:id,name'])->get() : Coach::with(['gym:id,name'])->where('gym_id',request()->user()->gym_id)->get(),
+            'clients' =>  request()->user()->hasRole(['administrator','manager']) ? Client::with(['gym:id,name'])->get() : 
+                Client::with(['gym:id,name'])->where('gym_id',request()->user()->gym_id)->get(),
+            'gyms' => request()->user()->hasRole(['administrator','manager']) ?  Gym::all(['id','name']) : null,
             'exercises' => Exercise::all(['id','name']),
             'selected_coaches' => $training_session->training_sessions_coaches()->pluck('id')->toArray(),
             'selected_clients' => $training_session->attendancesClients()->pluck('id')->toArray(),
@@ -128,9 +140,6 @@ class TrainingSessionController extends Controller
     public function update(CreateEditTrainingSessionRequest $request ,TrainingSession $training_session)
     {
         try{
-
-            $request->merge(['gym_id' => request()->user()->gym_id,'user_id' => request()->user()->id]);
-
             $repetitions = collect([]);
             $attendance_dates = collect([]);
     
@@ -151,8 +160,16 @@ class TrainingSessionController extends Controller
                     }
                 }
             }
-    
-            $training_session->update($request->validatedTrainingSession());
+            $attr = (request()->user()->hasRole(['administrator','manager']) ? 
+                $request->validatedTrainingSessionAdmOrManger() : $request->validatedTrainingSessionUserReg());
+            $attr['user_id'] = request()->user()->id;    
+            if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+                $attr['gym_id'] = request()->user()->gym_id;
+            }
+
+            $this->clientCoachGymValidation($request,$attr);
+
+            $training_session->update($attr);
             $training_session->training_sessions_coaches()->sync($request->validatedCoachIds());
             $training_session->training_sessions_exercises()->sync($repetitions);
             $training_session->attendancesClients()->sync($attendance_dates);
@@ -208,5 +225,26 @@ class TrainingSessionController extends Controller
             'level' => 'success',
             'message' => 'All Clients Disassociated Succesfully!'
         ]);
+    }
+
+    private function clientCoachGymValidation($request, $attr) {
+        /* if(!request()->user()->hasRole('administrator') && !request()->user()->hasRole('manager')){
+            $attr['gym_id'] = request()->user()->gym_id;
+        } */
+        // Check if the selected coaches belong to the same gym
+        if (request()->user()->hasRole(['administrator', 'manager'])) {
+            $coaches = Coach::whereIn('id', $request->validatedCoachIds())->where('gym_id', $attr['gym_id'])->get();
+            $clients = Client::whereIn('id', $request->validatedClientIds())->where('gym_id', $attr['gym_id'])->get();
+        } else {
+            $coaches = Coach::whereIn('id', $request->validatedCoachIds())->where('gym_id', request()->user()->gym_id)->get();
+            $clients = Client::whereIn('id', $request->validatedClientIds())->where('gym_id', request()->user()->gym_id)->get();
+        }
+
+        if ($coaches->count() !== count($request->validatedCoachIds())) {
+            throw new \Exception('Invalid coach selection. Coaches must belong to the same gym');
+        }
+        if ($clients->count() !== count($request->validatedClientIds())) {
+            throw new \Exception('Invalid client selection. Clients must belong to the same gym');
+        }
     }
 }

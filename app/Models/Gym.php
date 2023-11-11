@@ -37,7 +37,7 @@ class Gym extends Model
     }
     public function coaches():HasMany
     {
-        return $this->hasMany(Coach::class);
+        return $this->hasMany(Coach::class,'gym_id');
     }
 
     public function resolveRouteBinding($value, $field = null)

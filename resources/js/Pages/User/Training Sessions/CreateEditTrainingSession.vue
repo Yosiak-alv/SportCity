@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head,Link, router,useForm} from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head,Link, router,useForm,usePage} from '@inertiajs/vue3';
+import { computed,ref } from 'vue';
 import Card from '@/Components/Card.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -13,6 +13,10 @@ import Multiselect from '@suadelabs/vue3-multiselect'
 
 const props = defineProps({
     training_session:{
+        type:Object,
+        required:false
+    },
+    gyms:{
         type:Object,
         required:false
     },
@@ -55,6 +59,7 @@ const form = useForm({
     name:props.training_session?.name ?? '',
     description: props.training_session?.description ?? '',
     duration: props.training_session?.duration ?? '',
+    gym_id: props.training_session?.gym_id ?? '',
     starts_at: props.training_session?.starts_at ?? '',
     finish_at: props.training_session?.finish_at ?? '',
 
@@ -82,6 +87,16 @@ const store = () => {
 const update = (id) => {
     form.patch(route('training-sessions.update',{id:id}));
 };
+
+//role things
+const roles = ref(usePage().props.auth.user_roles);
+
+const getRoles = (data) => {
+    return roles.value.find((role) =>
+        role.toLowerCase().includes(data)
+    ) ? true : false;
+}
+
 </script>
 <style src="@suadelabs/vue3-multiselect/dist/vue3-multiselect.css"></style>
 <template>
@@ -109,6 +124,21 @@ const update = (id) => {
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.name" />
+                            </div>
+                            <div class="mt-1" v-if="getRoles('administrator') || getRoles('manager')">
+                                <InputLabel for="gym_id" value="Gym" />
+                                <select 
+                                    id="gym_id"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+                                    v-model="form.gym_id"
+                                    required
+                                >
+                                    <option v-for="gym in props.gyms" :value="gym.id" :key="gym.id">
+                                        {{gym.name}} 
+                                    </option>
+                                </select>
+
+                                <InputError class="mt-2" :message="form.errors.gym_id" />
                             </div>
                             <div class="mt-1">
                                 <InputLabel for="description" value="Description:" />
@@ -183,7 +213,7 @@ const update = (id) => {
                                     required
                                 >
                                     <option v-for="coach in props.coaches" :value="coach.id" :key="coach.id">
-                                        {{coach.name}} 
+                                        {{coach.name}} , {{ coach.gym?.name }}
                                     </option>
                                 </select>
                                 <InputError class="mt-2" :message="form.errors.coach_id" />
@@ -201,7 +231,7 @@ const update = (id) => {
                                     <div class="flex flex-col mb-4 ">
                                         <div class="flex items-center space-x-3 ml-8">
                                             <input :value="client.id" v-model="form.client_id" id="client_id" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <InputLabel for="client_id" :value="client.name"/>
+                                            <InputLabel for="client_id" :value="client.name + ', '+ client.gym?.name "/>
                                             <InputError class="mt-2" :message="form.errors.client_id" />
                                             
                                         </div>
