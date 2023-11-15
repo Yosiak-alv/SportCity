@@ -31,6 +31,15 @@ class Suscription extends Model
             $query->where(fn($query) =>
                 $query->where('id','like','%'.$search.'%')
                 ->orWhere('ends_at','like','%'.$search.'%')
+                ->orWhere(function ($query) use ($search) {
+                    $query->where(function ($query) use ($search) {
+                        if ($search === 'canceled') {
+                            $query->where('canceled', '1');
+                        } elseif ($search === 'ok') {
+                            $query->where('canceled', '0');
+                        }
+                    })->orWhere('canceled', 'like', '%' . $search . '%');
+                })
             )->orWhereHas('client', function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%');
             })->orWhereHas('plan', function ($query) use ($search) {

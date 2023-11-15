@@ -173,9 +173,9 @@ class ClientPolicy
             return false;
         }
         if ($user->hasRole('administrator') || $user->hasRole('manager')) {
-            return $user->hasPermissionTo('register client atendance_date training_session');
+            return $user->hasPermissionTo('register client training_session');
         }
-        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('register client atendance_date training_session');
+        return $user->gym_id == $client->gym_id && $user->hasPermissionTo('register client training_session');
     }
     public function destroyAttendace(User $user,Client $client): bool
     {

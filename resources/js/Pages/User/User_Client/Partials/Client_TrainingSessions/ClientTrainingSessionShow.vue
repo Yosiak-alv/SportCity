@@ -108,7 +108,7 @@ const getPermission = (data) => {
                             <span class="font-semibold mt-1 ">Attendace Date:</span> {{props.client_attendace_training_session.pivot.attendance_date}}
                         </div>
                         <SecondaryButton @click="confirmAttendanceDateRegistration()" class="mt-2"
-                            v-if="props.client.deleted_at == null && getPermission('register client atendance_date training_session')"
+                            v-if="props.client.deleted_at == null && getPermission('register client training_session')"
                         >
                             {{props.client_attendace_training_session.pivot.attendance_date ? 'Update Attendance' : 'Register Attendance'}}
                         </SecondaryButton>
