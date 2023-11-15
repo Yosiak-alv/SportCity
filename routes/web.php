@@ -8,6 +8,7 @@ use App\Http\Controllers\User\GymController;
 use App\Http\Controllers\User\PlanController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\PurchaseController;
 use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\User\SuscriptionController;
 use App\Http\Controllers\User\TrainingSessionController;
@@ -108,6 +109,11 @@ Route::middleware('auth')->group(function () {
     //GYM
     Route::resource('/gyms',GymController::class);
     Route::post('gyms/{gym}/restore',[GymController::class,'restore'])->name('gyms.restore');
+
+    //USER - PURCHASES  
+    Route::resource('/purchases',PurchaseController::class)->except('edit','update','destroy');
+    Route::get('/purchases/{purchase}/invoice',[PurchaseController::class,'purchaseInvoice'])->name('purchases.purchaseInvoice');   
+    Route::patch('/purchases/{purchase}/cancel',[PurchaseController::class,'cancelPurchase'])->name('purchases.cancelPurchase');
 }); 
 
 

@@ -37,7 +37,7 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'cancel client suscription']);
 
         Permission::create(['name' => 'assign client training_sessions']);
-        Permission::create(['name' => 'register client atendance_date training_session']);
+        Permission::create(['name' => 'register client training_session']);
         Permission::create(['name' => 'delete client training_session']);
 
         Permission::create(['name' => 'create client purchase']);
@@ -105,6 +105,16 @@ class RoleAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'edit gym']);
         Permission::create(['name' => 'delete gym']);
         Permission::create(['name' => 'restore gym']);
+
+        //PURCHASES
+        Permission::create(['name' => 'view purchases']);
+        Permission::create(['name' => 'show purchase']);
+        Permission::create(['name' => 'create purchase']);
+        /* Permission::create(['name' => 'edit purchase']);
+        Permission::create(['name' => 'delete purchase']); */
+        Permission::create(['name' => 'cancel purchase']);
+
+
         
        /*  Role::create(['name' => 'client']);
         Role::create(['name' => 'coach']); */

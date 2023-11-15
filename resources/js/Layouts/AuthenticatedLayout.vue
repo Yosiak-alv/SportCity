@@ -38,7 +38,7 @@ const getPermission = (data) => {
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 lg:flex">
                                 <NavLink :href="route('clients.index')" :active="route().current('clients.index')" v-if="getPermission('view clients')">
                                     Clients
                                 </NavLink>
@@ -52,18 +52,52 @@ const getPermission = (data) => {
                                     Gyms
                                 </NavLink>
                                 <NavLink :href="route('training-sessions.index')" :active="route().current('training-sessions.index')" v-if="getPermission('view training sessions')">
-                                    Training Sessions
+                                    Sessions
                                 </NavLink>
-                                <NavLink :href="route('suscriptions.index')" :active="route().current('suscriptions.index')" v-if="getPermission('view suscriptions')">
-                                    Suscriptions
-                                </NavLink>
+                                <div class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:outline-none focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700 transition duration-150 ease-in-out"
+                                    v-if="getPermission('view suscriptions') || getPermission('view purchases')"
+                                >
+                                    <Dropdown align="right" width="48">
+                                        <template #trigger>
+                                            <span class="inline-flex rounded-md">
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                                                >
+                                                    Financials
+
+                                                    <svg
+                                                        class="ml-2 -mr-0.5 h-4 w-4"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 20 20"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path
+                                                            fill-rule="evenodd"
+                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                            clip-rule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </template>
+                                        <template #content>
+                                            <DropdownLink :href="route('suscriptions.index')" :active="route().current('suscriptions.index')" v-if="getPermission('view suscriptions')">
+                                                Suscriptions 
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('purchases.index')" :active="route().current('purchases.index')" v-if="getPermission('view purchases')">
+                                                Purchases
+                                            </DropdownLink>
+                                        </template>
+                                    </Dropdown>
+                                </div>
                                 <NavLink :href="route('products.index')" :active="route().current('products.index')" v-if="getPermission('view products')">
                                     Products
                                 </NavLink>
                             </div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <div class="hidden lg:flex lg:items-center sm:ml-6">
                             <!-- Settings Dropdown -->
                             <div class="ml-3 relative">
                                 <Dropdown align="right" width="48">
@@ -102,7 +136,7 @@ const getPermission = (data) => {
                         </div>
 
                         <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center sm:hidden">
+                        <div class="-mr-2 flex items-center lg:hidden">
                             <button
                                 @click="showingNavigationDropdown = !showingNavigationDropdown"
                                 class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
@@ -137,7 +171,7 @@ const getPermission = (data) => {
                 <!-- Responsive Navigation Menu -->
                 <div
                     :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
-                    class="sm:hidden"
+                    class="lg:hidden"
                 >
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
@@ -158,6 +192,22 @@ const getPermission = (data) => {
                         <ResponsiveNavLink :href="route('training-sessions.index')" :active="route().current('training-sessions.index')" v-if="getPermission('view training sessions')">
                             Training Sessions
                         </ResponsiveNavLink>
+                        <!-- Responsive Financial Options -->
+                        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                            <div class="px-4">
+                                <div class="font-medium text-base text-gray-800 dark:text-gray-200">
+                                    Financials
+                                </div>
+                            </div>
+                            <div class="mt-3 space-y-1">
+                                <ResponsiveNavLink :href="route('suscriptions.index')" :active="route().current('suscriptions.index')" v-if="getPermission('view suscriptions')"> 
+                                    Suscriptions 
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink :href="route('purchases.index')" :active="route().current('purchases.index')" v-if="getPermission('view purchases')">
+                                    Purchases
+                                </ResponsiveNavLink>
+                            </div>
+                        </div>
                         <ResponsiveNavLink :href="route('products.index')" :active="route().current('products.index')" v-if="getPermission('view products')">
                             Products
                         </ResponsiveNavLink>

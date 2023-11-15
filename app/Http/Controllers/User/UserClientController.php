@@ -407,9 +407,19 @@ class UserClientController extends Controller
         $purchase->canceled = true;
         $purchase->save();
 
+        // Recupera los elementos de compra asociados a la compra
+        $purchaseItems = $purchase->purchaseItems;
+        // Ajusta la cantidad de productos según la cantidad cancelada
+        foreach ($purchaseItems as $purchaseItem) {
+            // Supongamos que la cantidad cancelada es 2
+            $product = $purchaseItem->product;
+            $product->quantity += $purchaseItem->quantity; //devolviendo productos
+            $product->save(); // Guarda los cambios en el producto
+        }
+
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',
-            'message' => 'Client Purchase Canceled Succesfully!'
+            'message' => 'Client Purchase Canceled Succesfully!, Products Return Succesfully!'
         ]);
     }
     public function purchaseInvoice(Client $client,int $id)

@@ -24,4 +24,26 @@ class Purchase extends Model
     {
         return $this->hasMany(PurchaseItems::class,'purchase_id');
     }
+
+    public function scopeFilter($query , array $filters)
+    {
+        $query->when($filters['search'] ?? false, function( $query, $search){
+            $query->where(fn($query) =>
+                $query->where('id','like','%'.$search.'%')
+                    ->orWhere('item_count','like','%'.$search.'%')
+                    ->orWhere('taxes','like','%'.$search.'%')
+                    ->orWhere('sub_total','like','%'.$search.'%')
+                    ->orWhere('total','like','%'.$search.'%')
+                    ->orWhere(function ($query) use ($search) {
+                        $query->where(function ($query) use ($search) {
+                            if ($search === 'canceled') {
+                                $query->where('canceled', '1');
+                            } elseif ($search === 'ok') {
+                                $query->where('canceled', '0');
+                            }
+                        })->orWhere('canceled', 'like', '%' . $search . '%');
+                    })
+            );
+        });
+    }
 }
