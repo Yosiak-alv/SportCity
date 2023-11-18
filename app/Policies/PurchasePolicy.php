@@ -54,6 +54,18 @@ class PurchasePolicy
         }
         return false;
     }
+    public function purchaseInvoice(User $user,Purchase $purchase): bool
+    {
+        if($purchase->canceled || !$purchase->client()->exists()){
+            return false;
+        }
+        foreach ($purchase->purchaseItems as $item) {
+            if ($item->product === null) {
+                return false;
+            }
+        }
+        return true;
+    }
     /**
      * Determine whether the user can restore the model.
      */

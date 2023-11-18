@@ -47,8 +47,10 @@ class SuscriptionPolicy
     {
         return $user->hasRole('administrator') && $user->hasPermissionTo('delete suscription');
     }
-    public function suscriptionInvoice(User $user): bool
+    public function suscriptionInvoice(User $user,Suscription $suscription): bool
     {
+        if($suscription->canceled || !$suscription->client()->exists() )
+            return false;
         return true;
     }
     public function cancelSuscription(User $user ,Suscription $suscription): bool

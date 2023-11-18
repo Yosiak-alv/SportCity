@@ -1,201 +1,114 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-	  <title>Purchase Invoice {{$purchase?->id}}</title>
-    
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Invoice {{$purchase?->id}}</title>
+  <style>
     body {
-      color: #f00;
-      font-family: Helvetica;
+      font-family: Arial, sans-serif;
     }
-    .invoice-box {
-        max-width: 800px;
-        margin: auto;
-        padding: 30px;
-        border: 1px solid #eee;
-        box-shadow: 0 0 10px rgba(0, 0, 0, .15);
-        font-size: 16px;
-        line-height: 24px;
-        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-        color: #555;
+
+    #invoice {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    
-    .invoice-box table {
-        width: 100%;
-        line-height: inherit;
-        text-align: left;
+
+    #invoice header {
+      text-align: center;
+      margin-bottom: 20px;
     }
-    
-    .invoice-box table td {
-        padding: 5px;
-        vertical-align: top;
+
+    #client-info, #gym-info, #purchase-info, #payment-info {
+      margin-bottom: 20px;
     }
-    
-    .invoice-box table tr td:nth-child(2) {
-        text-align: right;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
-    
-    .invoice-box table tr.top table td {
-        padding-bottom: 20px;
-    }
-    
-    .invoice-box table tr.top table td.title {
-        font-size: 45px;
-        line-height: 45px;
-        color: #333;
-    }
-    
-    .invoice-box table tr.information table td {
-        padding-bottom: 40px;
-    }
-    
-    .invoice-box table tr.heading td {
-        background: #eee;
-        border-bottom: 1px solid #ddd;
-        font-weight: bold;
-    }
-    
-    .invoice-box table tr.details td {
-        padding-bottom: 20px;
-    }
-    
-    .invoice-box table tr.item td{
-        border-bottom: 1px solid #eee;
-    }
-    
-    .invoice-box table tr.item.last td {
-        border-bottom: none;
-    }
-    
-    .invoice-box table tr.total td:nth-child(2) {
-      border-top: 2px solid #eee;
-      font-weight: bold;
-    }
-    
-    @media only screen and (max-width: 600px) {
-        .invoice-box table tr.top table td {
-          width: 100%;
-          display: block;
-          text-align: center;
-        }
-        
-        .invoice-box table tr.information table td {
-          width: 100%;
-          display: block;
-          text-align: center;
-        }
-    }
-    
-    /** RTL **/
-    .rtl {
-      direction: rtl;
-      font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-    }
-    
-    .rtl table {
-      text-align: right;
-    }
-    
-    .rtl table tr td:nth-child(2) {
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
       text-align: left;
     }
-    </style>
-</head>
 
+    th {
+      background-color: #f2f2f2;
+    }
+
+    #payment-info {
+      text-align: right;
+    }
+  </style>
+</head>
 <body>
-    <div class="invoice-box">
-        <table cellpadding="0" cellspacing="0">
-            <tr class="top">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td class="title">
-                                <img src="{{ public_path("storage/img/homepage/SportCity-Logo.JPG") }}" style="width:100%; max-width:300px;" alt="SportCity">
-                            </td>
-                            
-                            <td>
-                                <strong><small>PURCHASE</small></strong>  #{{$purchase?->id}}<br />
-            					          <small>{{$purchase?->created_at}}</small>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            
-            <tr class="information">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td>
-                                <strong>GYM INFORMATION</strong>.<br>
-                                {{$client?->gym->name}}<br> 
-                                {{$client?->gym->email}}<br>
-                                {{$client?->gym->address}}<br>
-                                {{$client?->gym->department->name}}<br>
-                            </td>
-                            
-                            <td>
-                                <strong>BILLING INFORMATION</strong><br>
-                                {{$client?->name}}, {{$client?->lastname}}<br>
-                                {{$client?->dui}}<br> 
-                                {{$client?->email}}<br> 
-                                {{$client?->address}}<br> 
-                                Phone: {{$client?->phone}}<br>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            
-            <tr class="heading">
-                <td>
-                    <strong>PAYMENT METHOD</strong>
-                </td>
-            </tr>
-            
-            <tr class="details">
-                <td>
-                    Cash
-                    USD - US Dollar
-                  </td>
-            </tr>
-            
-            <tr class="heading">
-                <td>
-                  Item
-                </td>
-                
-                <td>
-                  Price
-                </td>
-            </tr>
-            
+
+  <div id="invoice">
+    <header>
+      <h1>Purchase Invoice #{{$purchase?->id}}</h1>
+    </header>
+
+    <section id="client-info">
+        <h2>Client Information</h2>
+        {{$client?->name}}, {{$client?->lastname}}<br>
+        {{$client?->dui}}<br> 
+        {{$client?->email}}<br> 
+        {{$client?->address}}<br> 
+        Phone: {{$client?->phone}}<br>
+    </section>
+
+    <section id="gym-info">
+        <h2>Gym Information</h2>
+        {{$client?->gym?->name ?? 'Current Gym has been Deleted'}}<br> 
+        {{$client?->gym?->email}}<br>
+        {{$client?->gym?->address}}<br>
+        {{$client?->gym?->department->name}}<br>
+    </section>
+
+    <section id="purchase-info">
+      <h2>Purchase Information</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
             @foreach($purchase?->purchaseItems as $purchaseItem)
-                <tr class="item">
-                    <td>
-                        {{$purchaseItem?->product->name}}
-                    </td>
-                    
-                    <td>
-                        ${{$purchaseItem?->item_total}}
-                    </td>
+                <tr>
+                    <td>{{$purchaseItem?->product?->name}}</td>
+                    <td> {{$purchaseItem?->quantity}}</td>
+                    <td>${{$purchaseItem?->unit_price}}</td>
+                    <td>${{$purchaseItem?->item_total}}</td>
                 </tr>
             @endforeach
-            
-            
-            <tr class="total">
-                <td>
-                    SubTotal: ${{$purchase?->sub_total}} USD <br>
-                </td>
-                <td>
-                    Taxes: ${{$purchase?->taxes}} USD <br>
-                </td>
-                <td>
-                  Total: ${{$purchase?->total}} USD <br>
-                </td>
-            </tr>
-        </table>
-    </div>
+          
+        </tbody>
+      </table>
+    </section>
+
+    <section id="payment-info">
+      <h2>Payment Information</h2>
+      <p><strong>Total Items</strong> {{$purchase?->item_count}}</p>
+      <p><strong>Sub Total:</strong> ${{$purchase?->sub_total}}</p>
+      <p><strong>Taxes:</strong> ${{$purchase?->taxes}}</p>
+      <p><strong>Total Amount:</strong> ${{$purchase?->total}}</p>
+      <p><strong>Payment Method:</strong> USD -Dollars</p>
+      <p><strong>Transaction:</strong> Cash</p>
+      <p><strong>Date:</strong> {{$purchase?->created_at}}</p>
+    </section>
+  </div>
+
 </body>
 </html>
+
+

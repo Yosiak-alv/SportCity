@@ -7,11 +7,13 @@ use App\Models\Client;
 use App\Models\Gym;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Traits\PurchaseTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 class PurchaseController extends Controller
 {
+    use PurchaseTrait;
     public function __construct()
     {
         $this->authorizeResource(Purchase::class, 'purchase');
@@ -148,7 +150,7 @@ class PurchaseController extends Controller
             $product->save(); // Guarda los cambios en el producto
         }
 
-        return back()->with([
+        return redirect()->route('purchases.index')->with([
             'level' => 'success',
             'message' => 'Client Purchase Canceled Succesfully, Products Return Succesfully!'
         ]);

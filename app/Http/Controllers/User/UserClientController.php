@@ -270,8 +270,7 @@ class UserClientController extends Controller
     public function suscriptionInvoice(Client $client,int $id)
     {
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('suscription-invoice',[
-            'client' => $client,
-            'suscription' => Suscription::find($id),
+            'suscription' => Suscription::with(['client.gym.department', 'plan'])->find($id),
         ]);
 
         return $pdf->download('suscription-invoice.pdf');

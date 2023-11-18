@@ -17,7 +17,6 @@ trait SuscriptionTrait {
     {
         return array_merge(parent::resourceMethodsWithoutModels(), [
             // method in Controller
-            'suscriptionInvoice',
         ]);
     }
 }

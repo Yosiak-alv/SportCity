@@ -1,194 +1,107 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-	  <title>Suscription Invoice {{$suscription?->id}}</title>
-    
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suscription Invoice {{$suscription?->id}}</title>
+  <style>
     body {
-      color: #f00;
-      font-family: Helvetica;
+      font-family: Arial, sans-serif;
     }
-    .invoice-box {
-        max-width: 800px;
-        margin: auto;
-        padding: 30px;
-        border: 1px solid #eee;
-        box-shadow: 0 0 10px rgba(0, 0, 0, .15);
-        font-size: 16px;
-        line-height: 24px;
-        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-        color: #555;
+
+    #invoice {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    
-    .invoice-box table {
-        width: 100%;
-        line-height: inherit;
-        text-align: left;
+
+    #invoice header {
+      text-align: center;
+      margin-bottom: 20px;
     }
-    
-    .invoice-box table td {
-        padding: 5px;
-        vertical-align: top;
+
+    #client-info, #gym-info, #purchase-info, #payment-info {
+      margin-bottom: 20px;
     }
-    
-    .invoice-box table tr td:nth-child(2) {
-        text-align: right;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
-    
-    .invoice-box table tr.top table td {
-        padding-bottom: 20px;
-    }
-    
-    .invoice-box table tr.top table td.title {
-        font-size: 45px;
-        line-height: 45px;
-        color: #333;
-    }
-    
-    .invoice-box table tr.information table td {
-        padding-bottom: 40px;
-    }
-    
-    .invoice-box table tr.heading td {
-        background: #eee;
-        border-bottom: 1px solid #ddd;
-        font-weight: bold;
-    }
-    
-    .invoice-box table tr.details td {
-        padding-bottom: 20px;
-    }
-    
-    .invoice-box table tr.item td{
-        border-bottom: 1px solid #eee;
-    }
-    
-    .invoice-box table tr.item.last td {
-        border-bottom: none;
-    }
-    
-    .invoice-box table tr.total td:nth-child(2) {
-      border-top: 2px solid #eee;
-      font-weight: bold;
-    }
-    
-    @media only screen and (max-width: 600px) {
-        .invoice-box table tr.top table td {
-          width: 100%;
-          display: block;
-          text-align: center;
-        }
-        
-        .invoice-box table tr.information table td {
-          width: 100%;
-          display: block;
-          text-align: center;
-        }
-    }
-    
-    /** RTL **/
-    .rtl {
-      direction: rtl;
-      font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-    }
-    
-    .rtl table {
-      text-align: right;
-    }
-    
-    .rtl table tr td:nth-child(2) {
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
       text-align: left;
     }
-    </style>
-</head>
 
+    th {
+      background-color: #f2f2f2;
+    }
+
+    #payment-info {
+      text-align: right;
+    }
+  </style>
+</head>
 <body>
-    <div class="invoice-box">
-        <table cellpadding="0" cellspacing="0">
-            <tr class="top">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td class="title">
-                                <img src="{{ public_path("storage/img/homepage/SportCity-Logo.JPG") }}" style="width:100%; max-width:300px;" alt="SportCity">
-                            </td>
-                            
-                            <td>
-                                <strong><small>SUSCRIPTION</small></strong>  #{{$suscription?->id}}<br />
-            					          <small>{{$suscription?->created_at}}</small>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            
-            <tr class="information">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td>
-                                <strong>GYM INFORMATION</strong>.<br>
-                                {{$suscription?->client?->gym->name}}<br> 
-                                {{$suscription?->client?->gym->email}}<br>
-                                {{$suscription?->client?->gym->address}}<br>
-                                {{$suscription?->client?->gym->department->name}}<br>
-                            </td>
-                            
-                            <td>
-                                <strong>BILLING INFORMATION</strong><br>
-                                {{$suscription?->client?->name}}, {{$suscription?->client?->lastname}}<br>
-                                {{$suscription?->client?->dui}}<br> 
-                                {{$suscription?->client?->email}}<br> 
-                                {{$suscription?->client?->address}}<br> 
-                                Phone: {{$suscription?->client?->phone}}<br>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            
-            <tr class="heading">
-                <td>
-                    <strong>PAYMENT METHOD</strong>
-                </td>
-            </tr>
-            
-            <tr class="details">
-                <td>
-                  Cash
-                  USD - US Dollar
-                </td>
-            </tr>
-            
-            <tr class="heading">
-                <td>
-                  Item
-                </td>
-                
-                <td>
-                  Price
-                </td>
-            </tr>
-            
-            <tr class="item">
-                <td>
-                  {{$suscription?->plan->name}}
-                </td>
-                
-                <td>
-					${{$suscription?->plan->price}}
-                </td>
-            </tr>
-            
-            <tr class="total">
-                <td></td>
-                
-                <td>
-                  Total: ${{$suscription?->plan->price}} USD
-                </td>
-            </tr>
-        </table>
-    </div>
+
+  <div id="invoice">
+    <header>
+      <h1>Subcription Invoice #{{$suscription?->id}}</h1>
+    </header>
+
+    <section id="client-info">
+      <h2>Client Information</h2>
+      {{$suscription?->client?->name}}, {{$suscription?->client?->lastname}}<br>
+      {{$suscription?->client?->dui}}<br> 
+      {{$suscription?->client?->email}}<br> 
+      {{$suscription?->client?->address}}<br> 
+      Phone: {{$suscription?->client?->phone}}<br>
+    </section>
+
+    <section id="gym-info">
+      <h2>Gym Information</h2>
+      {{$suscription?->client?->gym?->name ?? 'Current Gym has been Deleted'}}<br> 
+      {{$suscription?->client?->gym?->email}}<br>
+      {{$suscription?->client?->gym?->address}}<br>
+      {{$suscription?->client?->gym?->department->name}}<br>
+    </section>
+
+    <section id="purchase-info">
+      <h2>Purchase Information</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{$suscription?->plan?->name}}</td>
+            <td>1</td>
+            <td>${{$suscription?->plan?->price}}</td>
+            <td>${{$suscription?->plan?->price}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="payment-info">
+      <h2>Payment Information</h2>
+      <p><strong>Total Amount:</strong> ${{$suscription?->plan?->price}}</p>
+      <p><strong>Payment Method:</strong> USD -Dollars</p>
+      <p><strong>Transaction:</strong> Cash</p>
+      <p><strong>Date:</strong> {{$suscription?->created_at}}</p>
+    </section>
+  </div>
+
 </body>
 </html>
+

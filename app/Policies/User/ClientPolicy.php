@@ -3,6 +3,8 @@
 namespace App\Policies\User;
 
 use App\Models\Client;
+use App\Models\Purchase;
+use App\Models\Suscription;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -149,6 +151,10 @@ class ClientPolicy
     
     public function suscriptionInvoice(User $user,Client $client): bool
     {
+        $suscription = Suscription::find(request()->route()->parameter('id')); 
+        if ($client->trashed() || $suscription->canceled) { 
+            return false;
+        }
         return true;
     }
     //CLIENT TRAINING SESSIONS
@@ -213,5 +219,13 @@ class ClientPolicy
             return $user->hasPermissionTo('cancel client purchase');
         }
         return $user->gym_id == $client->gym_id && $user->hasPermissionTo('cancel client purchase');
+    }
+    public function purchaseInvoice(User $user,Client $client): bool
+    {
+        $purchase = Purchase::find(request()->route()->parameter('id'));
+        if ($client->trashed() || $purchase->canceled) { 
+            return false;
+        }
+        return true;
     }
 }
