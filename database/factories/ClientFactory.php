@@ -25,7 +25,7 @@ class ClientFactory extends Factory
             'name' => fake()->name(),
             'lastname' => fake()->lastName(),
             'genre' => fake()->randomElement(['M','H']),
-            'phone' =>fake()->numerify('#### ####'),
+            'phone' =>fake()->numerify('########'),
             'address' => fake()->address(),
             'birth_date' => fake()->date(),
             'height' =>fake()->randomFloat(2,0,5),

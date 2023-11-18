@@ -37,7 +37,7 @@ class ClientSeeder extends Seeder
             'dui' => '06357872-5',
             'name' => 'Josias Isaac',
             'lastname' => 'Ramirez',
-            'phone' => '7808 5394',
+            'phone' => '78085394',
             'email' => 'isaac@example.com',
             'gym_id' => 1,
         ]);

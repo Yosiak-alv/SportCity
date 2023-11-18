@@ -19,7 +19,7 @@ class CoachSeeder extends Seeder
             'dui' => '07357872-5',
             'name' => 'Jose Isaac',
             'lastname' => 'Ramirez',
-            'phone' => '7808 5394',
+            'phone' => '78085394',
             'email' => 'jose@example.com',
             'gym_id' => 1,
         ]);

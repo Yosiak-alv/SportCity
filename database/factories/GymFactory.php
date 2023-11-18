@@ -22,7 +22,7 @@ class GymFactory extends Factory
             'name' => fake()->unique()->name(),
             'address' => fake()->address(),
             'email' => fake()->unique()->email(),
-            'phone' => fake()->numerify('#### ####'),
+            'phone' => fake()->numerify('########'),
             'department_id' => $department->id, 
         ];
     }

@@ -23,7 +23,7 @@ class UserFactory extends Factory
             'dui' => fake()->unique()->numerify('########-#'),
             'name' => fake()->name(),
             'lastname' => fake()->lastName(),
-            'phone' => fake()->numerify('#### ####'),
+            'phone' => fake()->numerify('########'),
             'gym_id' =>$gym->id,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),

@@ -24,7 +24,7 @@ class CoachFactory extends Factory
             'name' => fake()->name(),
             'lastname' => fake()->lastName(),
             
-            'phone' => fake()->numerify('#### ####'),
+            'phone' => fake()->numerify('########'),
             'address' => fake()->address(),
             'gym_id' => $gym ->id,
             'email' => fake()->unique()->safeEmail(),

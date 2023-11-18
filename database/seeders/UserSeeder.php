@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
             'dui' => '06357872-9',
             'name' => 'Josias Isaac',
             'lastname' => 'Romero',
-            'phone' => '7808 5392',
+            'phone' => '78085392',
             'email' => 'josias@example.com',
             'gym_id' => 1,
         ]);
