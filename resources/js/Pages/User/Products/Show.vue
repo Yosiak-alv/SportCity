@@ -87,9 +87,10 @@ const getPermission = (data) => {
                                 <br>
                                 <span class="font-semibold">Updated At:</span> {{ product.updated_at}}
                                 <br>
-                                <span class="font-semibold">Gym:</span> {{ product.gym.name }}
+                                <span class="font-semibold">Gym:</span> <span :class="{'text-red-600 dark:text-red-400' : product.gym == null}">
+                                {{ product.gym?.name ?? 'Current Gym Deleted'}} </span>
                                 <br>
-                                <span class="font-semibold">Gym Address:</span> {{product.gym.department.name}}, {{ product.gym.address }}
+                                <span class="font-semibold">Gym Address:</span> {{product.gym?.department.name ?? ''}}, {{ product.gym?.address  ?? ''}}
                                 <br>
                                 <span v-if="props.product.deleted_at" class="font-semibold">Deleted at:</span> {{props.product.deleted_at}}
                             </div>

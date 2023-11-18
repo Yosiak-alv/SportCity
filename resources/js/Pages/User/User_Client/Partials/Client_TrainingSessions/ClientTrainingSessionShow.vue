@@ -140,16 +140,23 @@ const getPermission = (data) => {
                                 </h2>
                             </div>
                             <div class="overflow-y-scroll" style="height: 30rem;" >
-                                <div class="text-base p-4" v-for="training_session_coach in props.training_session_coaches">
-                                    <div class="w-full text-justify ">
-                                        <h3 class="inline text-3xl">
-                                            {{ training_session_coach.name }}, {{training_session_coach.lastname}}
-                                        </h3>
-                                        <div class="my-1.5">
-                                            <span class="font-semibold">Contact: </span> {{training_session_coach.email}}
+                                <div v-if="props.training_session_coaches.length != 0 ">
+                                    <div class="text-base p-4" v-for="training_session_coach in props.training_session_coaches">
+                                        <div class="w-full text-justify ">
+                                            <h3 class="inline text-3xl">
+                                                {{ training_session_coach.name }}, {{training_session_coach.lastname}}
+                                            </h3>
+                                            <div class="my-1.5">
+                                                <span class="font-semibold">Contact: </span> {{training_session_coach.email}}
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>    
+                                    </div>    
+                                </div>
+                                <div v-else>
+                                    <h3 class="inline text-2xl">
+                                        No Coaches Assigned
+                                    </h3>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -165,18 +172,25 @@ const getPermission = (data) => {
                                     </h2>
                                 </div>
                                 <div class="overflow-y-scroll" style="height: 30rem;" >
-                                    <div class="text-base p-4" v-for="training_session_exercise in props.training_session_exercises">
-                                        <div class="w-full text-justify ">
-                                            <h3 class="inline text-3xl">
-                                                {{training_session_exercise.name }} X {{ training_session_exercise.pivot.repetitions }}
-                                            </h3>
-                                            <div class="my-1.5">
-                                                <span class="font-semibold ">Demonstration: </span> {{training_session_exercise.demonstration_url}}
-                                            </div>
-                                            <div class="my-1.5">
-                                                <span class="font-semibold ">Intructions: </span> {{training_session_exercise.instructions}}
+                                    <div v-if="props.training_session_exercises.length != 0">
+                                        <div class="text-base p-4" v-for="training_session_exercise in props.training_session_exercises">
+                                            <div class="w-full text-justify ">
+                                                <h3 class="inline text-3xl">
+                                                    {{training_session_exercise.name }} X {{ training_session_exercise.pivot.repetitions }}
+                                                </h3>
+                                                <div class="my-1.5">
+                                                    <span class="font-semibold ">Demonstration: </span> {{training_session_exercise.demonstration_url}}
+                                                </div>
+                                                <div class="my-1.5">
+                                                    <span class="font-semibold ">Intructions: </span> {{training_session_exercise.instructions}}
+                                                </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div v-else>
+                                        <h3 class="inline text-2xl">
+                                            No Exercises Assigned
+                                        </h3>
                                     </div> 
                                 </div>   
                             </div>

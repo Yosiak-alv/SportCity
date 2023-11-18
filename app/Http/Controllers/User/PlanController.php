@@ -78,6 +78,12 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
+        if($plan->suscriptions()->count() > 0){
+            return back()->with([
+                'level' => 'danger',
+                'message' => 'Plan has suscriptions, please cancel them first!'
+            ]);
+        }
         $plan->delete();
         return redirect()->route('suscriptions.index')->with([
             'level' => 'success',

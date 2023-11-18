@@ -6,9 +6,6 @@ import {ref} from "vue";
 import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
 const props = defineProps({
     purchase:{
@@ -16,8 +13,11 @@ const props = defineProps({
         required:true
     },
 });
-
-
+/* const productDeleted = ref(false);
+const productIsDeleted = (product) => {
+    return product == null ? productDeleted.value = true: productDeleted.value = false;
+}
+ */
 const permissions = ref(usePage().props.auth.user_role_permissions);
 
 const getPermission = (data) => {
@@ -27,15 +27,17 @@ const getPermission = (data) => {
 }
 
 //---Modal Section CANCEL----
-const confirmingCancelPurchase = ref(false);
-const confirmCancelPurchaseDeletion = () => {
-    confirmingCancelPurchase.value = true;
+const confirmingDeletion = ref(false);
+    
+const confirmDeletion = () => {
+    confirmingDeletion.value = true;
 };
 
 const closeModal = () => {
-    confirmingCancelPurchase.value = false;
+    confirmingDeletion.value = false;
 };
-const destroy = () => {
+
+const cancelPurchase = () => {
     router.patch(route('purchases.cancelPurchase',{id: props.purchase.id }),{
         preserveScroll: true,
         onSuccess: () => closeModal(),
@@ -54,14 +56,6 @@ const destroy = () => {
         <div class="py-12">
             
             <Card class="max-w-7xl spacing-y-6">
-                <header class="p-6">
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100" :class="{'text-red-600 dark:text-red-400' : props.purchase.client?.name == null}">
-                    Client : {{props.purchase.client?.name ?? 'Client Deleted'}}, {{props.purchase.client?.lastname}}</h2>
-
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        In this section you can see the purchase for a client...
-                    </p>
-                </header>
                 
                 <div class="max-w-[85rem] px-4 sm:px-6 lg:px-8 mx-auto my-2 sm:my-10">
                     <!-- Grid -->
@@ -76,7 +70,7 @@ const destroy = () => {
                             <a
                                 class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150"
                                 :href="route('purchases.purchaseInvoice', {id: props.purchase.id})" 
-                                v-if="props.purchase.canceled == false"
+                                v-if="props.purchase.canceled == false && props.purchase.client != null"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-invoice" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -89,7 +83,7 @@ const destroy = () => {
                             </a>
                             
                             <div v-if="props.purchase.client != null && getPermission('cancel client purchase')">
-                                <DangerButton @click="confirmCancelPurchaseDeletion()" v-show="props.purchase.canceled == false">
+                                <DangerButton @click="confirmDeletion()" v-show="props.purchase.canceled == false">
                                     <div class="flex space-x-4">
                                         <div>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -116,8 +110,8 @@ const destroy = () => {
                                 <dt class="min-w-[150px] max-w-[200px] text-gray-500">
                                     Billing details:
                                 </dt>
-                                <dd class="font-medium text-gray-800 dark:text-gray-200">
-                                    <span class="block font-semibold">{{props.purchase.client?.name}}, {{props.purchase.client?.lastname}}</span>
+                                <dd class="font-medium text-gray-800 dark:text-gray-200" :class="{'text-red-600 dark:text-red-400' : purchase.client == null}">
+                                    <span class="block font-semibold">{{props.purchase.client?.name ?? 'Client Deleted'}}, {{props.purchase.client?.lastname}}</span>
                                     <span class="not-italic font-normal">{{props.purchase.client?.dui}}</span><br>
                                     <span class="not-italic font-normal">{{props.purchase.client?.email}}</span><br>
                                     <span class="not-italic font-normal">{{props.purchase.client?.phone}}</span><br>
@@ -192,9 +186,10 @@ const destroy = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="bg-white dark:bg-gray-800" v-for="purchase_item in props.purchase.purchase_items" :key="purchase_item.id">
-                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ purchase_item.product.name ?? 'Product Deleted'}}
+                            <tr class="bg-gray-800" v-for="purchase_item in props.purchase.purchase_items" :key="purchase_item.id">
+                                <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap "
+                                :class="{'text-red-400' : purchase_item.product == null }" >
+                                    {{ purchase_item.product?.name ?? 'Product Deleted'}}
                                 </th>
                                 <td class="px-6 py-4">
                                     {{ purchase_item.quantity }}
@@ -247,7 +242,7 @@ const destroy = () => {
             </Card>
         </div>
     </AuthenticatedLayout>
-    <Modal :show="confirmingCancelPurchase" @close="closeModal">
+    <Modal :show="confirmingDeletion" @close="closeModal()">
         <div class="p-6">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Are you sure you want to Cancel this Purchase ?
@@ -258,11 +253,11 @@ const destroy = () => {
             </p>
 
             <div class="mt-6 flex justify-end">
-                <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+                <SecondaryButton @click="closeModal()"> Cancel </SecondaryButton>
 
                 <DangerButton
                     class="ml-3"
-                    @click="destroy()"
+                    @click="cancelPurchase()"
                 >
                     Confirm
                 </DangerButton>
