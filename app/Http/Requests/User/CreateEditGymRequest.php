@@ -26,7 +26,7 @@ class CreateEditGymRequest extends FormRequest
             'name' => ['required', 'string', 'min:6' ,'max:255', Rule::unique('gyms','name')->ignore($this->gym?->id)],
             'address' => ['required','min:10','string','max:5000'],
             'email' => ['required','email', 'max:255', Rule::unique('gyms','email')->ignore($this->gym?->id)],
-            'phone' => ['required','regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/'],
+            'phone' => ['required','regex:/^(2|6|7|8)[0-9]{7}$/'],
             'department_id' => ['required', 'numeric' , 'gt:0', 'exists:departments,id'],
         ];
     }

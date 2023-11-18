@@ -28,7 +28,7 @@ class CreateEditUserRequest extends FormRequest
             'name' => ['required','max:255'],
             'lastname' => ['required','max:255'],
             'gym_id' => ['required','numeric','gt:0','exists:gyms,id'],
-            'phone' => ['required','regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/'],
+            'phone' => ['required','regex:/^(2|6|7|8)[0-9]{7}$/'],
             'email' => ['required','email', 'max:255', Rule::unique('users','email')->ignore($this->user?->id)],
             'password' => [Password::default()->min(8), Rule::requiredIf($this->user?->id == null)],
 
