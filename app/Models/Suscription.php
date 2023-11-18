@@ -35,7 +35,7 @@ class Suscription extends Model
                     $query->where(function ($query) use ($search) {
                         if ($search === 'canceled') {
                             $query->where('canceled', '1');
-                        } elseif ($search === 'ok') {
+                        } elseif ($search === 'active') {
                             $query->where('canceled', '0');
                         }
                     })->orWhere('canceled', 'like', '%' . $search . '%');

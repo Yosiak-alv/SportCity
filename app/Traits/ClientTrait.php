@@ -31,7 +31,8 @@ trait ClientTrait {
 
             'createPurchase' => 'createPurchase',
             'storePurchase' => 'createPurchase',
-            'showPurchase' => 'showPurchase'
+            'showPurchase' => 'showPurchase',
+            'purchaseInvoice' => 'purchaseInvoice',
         ]);
     }
 
