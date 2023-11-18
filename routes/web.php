@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\User\ClientSystemController;
 use App\Http\Controllers\User\CoachController;
+use App\Http\Controllers\User\DashboardUserController;
 use App\Http\Controllers\User\ExerciseController;
 use App\Http\Controllers\User\GymController;
 use App\Http\Controllers\User\PlanController;
@@ -32,9 +33,7 @@ use Inertia\Inertia;
 Route::get('/',[ HomeController::class, 'create'])->name('homepage');
 Route::post('/contact_send',[HomeController::class,'contactSendEmail'])->name('contact_us.sendEmail');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('User/Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardUserController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
