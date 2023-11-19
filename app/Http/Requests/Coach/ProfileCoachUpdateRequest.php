@@ -22,7 +22,7 @@ class ProfileCoachUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => 'min:8|regex:/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/',
+            'phone' => ['min:8','regex:/^(2|6|7|8)[0-9]{7}$/'],
             'email' => ['email', 'max:255', Rule::unique('coaches','email')->ignore($this->user()->id)],
             'address' => ['min:10','string','max:5000'],
         ];

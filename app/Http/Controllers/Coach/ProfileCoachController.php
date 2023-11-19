@@ -52,7 +52,7 @@ class ProfileCoachController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        Auth::guard('coach')->logout();
 
         $user->delete();
 
