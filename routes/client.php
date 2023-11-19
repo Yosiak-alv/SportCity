@@ -9,6 +9,7 @@ use App\Http\Controllers\Client\Auth\PasswordController;
 use App\Http\Controllers\Client\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Client\Auth\RegisteredUserController;
 use App\Http\Controllers\Client\Auth\VerifyEmailController;
+use App\Http\Controllers\Client\DashboardClientController;
 use App\Http\Controllers\Client\ProfileClientController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -64,9 +65,13 @@ Route::prefix('client')->group(static function() {
 
     Route::middleware('auth:client')->group(function() {
 
-        Route::get('/dashboard',function () {
-            return Inertia::render('Client/ClientDashboard');
-        })->name('client.dashboard');
+        Route::get('/dashboard',[DashboardClientController::class,'index'])->name('client.dashboard');
+        Route::get('/training-sessions/{training_session}',[DashboardClientController::class,'showTrainingSession'])->name('client.training_sessions.show');
+        Route::get('/purchases/{purchase}',[DashboardClientController::class,'showPurchase'])->name('client.purchases.show');
+        Route::get('/purchases/{purchase}/invoice',[DashboardClientController::class,'purchaseInvoice'])->name('client.purchases.invoice');
+
+        Route::get('/suscriptions/{suscription}',[DashboardClientController::class,'showSuscription'])->name('client.suscriptions.show');
+        Route::get('/suscriptions/{suscription}/invoice',[DashboardClientController::class,'suscriptionInvoice'])->name('client.suscriptions.invoice');
         
         Route::get('/profile', [ProfileClientController::class, 'edit'])->name('client.profile.edit');
         Route::patch('/profile', [ProfileClientController::class, 'update'])->name('client.profile.update');
