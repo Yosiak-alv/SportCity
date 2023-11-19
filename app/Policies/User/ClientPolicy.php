@@ -226,6 +226,11 @@ class ClientPolicy
         if ($client->trashed() || $purchase->canceled) { 
             return false;
         }
+        foreach ($purchase->purchaseItems as $item) {
+            if ($item->product === null) {
+                return false;
+            }
+        }
         return true;
     }
 }

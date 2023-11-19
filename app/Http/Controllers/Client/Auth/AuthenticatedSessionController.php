@@ -32,7 +32,19 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginClientRequest $request): RedirectResponse
     {
         $request->authenticate();
+        if (Auth::guard('client')->user()->gym == null) {
+            
+            Auth::guard('client')->logout();
 
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            return redirect()->route('homepage')->with([
+                'level' => 'danger',
+                'message' => 'This user is not available to login as the gym is neither available'
+            ]);
+        }
         $request->session()->regenerate();
 
         return redirect()->intended(route('client.dashboard'));

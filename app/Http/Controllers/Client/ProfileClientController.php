@@ -52,7 +52,7 @@ class ProfileClientController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        Auth::guard('client')->logout();
 
         $user->delete();
 
