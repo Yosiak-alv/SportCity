@@ -10,6 +10,7 @@ use App\Http\Controllers\Coach\Auth\PasswordResetLinkController;
 
 use App\Http\Controllers\Coach\Auth\VerifyEmailController;
 
+use App\Http\Controllers\Coach\DashboardCoachController;
 use App\Http\Controllers\Coach\ProfileCoachController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -65,10 +66,8 @@ Route::prefix('coach')->group(static function() {
 
     Route::middleware('auth:coach')->group(function() {
 
-        Route::get('/dashboard',function () {
-            return Inertia::render('Coach/CoachDashboard');
-        })->name('coach.dashboard');
-        
+        Route::get('/dashboard',[DashboardCoachController::class,'index'])->name('coach.dashboard');
+        Route::get('/training-sessions/{training_session}',[DashboardCoachController::class,'showTrainingSessions'])->name('coach.training_sessions.show');
         Route::get('/profile', [ProfileCoachController::class, 'edit'])->name('coach.profile.edit');
         Route::patch('/profile', [ProfileCoachController::class, 'update'])->name('coach.profile.update');
         Route::delete('/profile', [ProfileCoachController::class, 'destroy'])->name('coach.profile.destroy');
