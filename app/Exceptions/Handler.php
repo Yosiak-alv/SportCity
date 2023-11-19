@@ -28,7 +28,7 @@ class Handler extends ExceptionHandler
             //
         });
     }
-    /* public function render($request, Throwable $e)
+    public function render($request, Throwable $e)
     {
         $response = parent::render($request, $e);
 
@@ -49,5 +49,5 @@ class Handler extends ExceptionHandler
         }
 
         return $response;
-    }  */
+    } 
 }
