@@ -28,7 +28,6 @@ class HomeController extends Controller
             $attr = $request->validate([
                 'name' => ['required','max:40','string'],
                 'email' => ['required','email'],
-                'message' => ['required','max:5000']
             ]);
 
             $sendToEmail = strtolower($attr['email']);

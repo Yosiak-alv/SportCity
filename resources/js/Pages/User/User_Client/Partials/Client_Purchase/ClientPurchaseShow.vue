@@ -199,8 +199,9 @@ const destroy = () => {
                         </thead>
                         <tbody>
                             <tr class="bg-white dark:bg-gray-800" v-for="purchase_item in props.purchase.purchase_items" :key="purchase_item.id">
-                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ purchase_item.product.name }}
+                                <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap "
+                                :class="{'text-red-400' : purchase_item.product == null }" >
+                                    {{ purchase_item.product?.name ?? 'Product Deleted'}}
                                 </th>
                                 <td class="px-6 py-4">
                                     {{ purchase_item.quantity }}

@@ -9,11 +9,9 @@ defineProps({
     },
     gym:{
         type:Object,
-        required:true
     },
     plans:{
         type:Object,
-        required:true
     },
     
 });
@@ -21,7 +19,6 @@ defineProps({
 const form = useForm({
     name:'',
     email:'',
-    message:''
 });
 </script>
 
@@ -263,13 +260,13 @@ const form = useForm({
                 <div class="bg-gray-900 relative flex flex-wrap py-6 rounded shadow-md">
                     <div class="lg:w-1/2 px-6">
                         <h2 class="title-font font-semibold text-white tracking-widest text-xs">ADDRESS</h2>
-                        <p class="mt-1">{{gym?.address}}</p>
+                        <p v-if="gym != null" class="mt-1">{{gym?.address ?? 'Gym Current Unvailable'}}</p>
                     </div>
                     <div class="lg:w-1/2 px-6 mt-4 lg:mt-0">
                         <h2 class="title-font font-semibold text-white tracking-widest text-xs">EMAIL</h2>
-                        <a class="text-green-500 leading-relaxed">{{gym?.email}}</a>
+                        <a v-if="gym != null" class="text-green-500 leading-relaxed">{{gym?.email ?? ''}}</a>
                         <h2 class="title-font font-semibold text-white tracking-widest text-xs mt-4">PHONE</h2>
-                        <p class="leading-relaxed">{{gym?.phone}}</p>
+                        <p v-if="gym != null" class="leading-relaxed">{{gym?.phone ?? ''}}</p>
                     </div>
                 </div>
             </div>
@@ -287,11 +284,6 @@ const form = useForm({
                         <label for="email" class="leading-7 text-sm text-gray-400">Email</label>
                         <input v-model="form.email" type="email" id="email" name="email" class="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                         <InputError class="mt-2" :message="form.errors.email" />
-                    </div>
-                    <div class="relative mb-4">
-                        <label for="message" class="leading-7 text-sm text-gray-400">Message</label>
-                        <textarea v-model="form.message" id="message" name="message" class="w-full bg-gray-800 rounded border border-gray-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-900 h-32 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
-                        <InputError class="mt-2" :message="form.errors.message" />
                     </div>
                     <button :disabled="form.processing" 
                     class="text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg">Submit</button>

@@ -1,42 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Successfully send your message</title>	
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitLife Gym Newsletter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header {
+      text-align: center;
+    }
+
+    header h1 {
+      color: #333333;
+    }
+
+    .content {
+      margin-top: 20px;
+    }
+
+    p {
+      color: #555555;
+      line-height: 1.6;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 3px;
+    }
+
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #888888;
+    }
+  </style>
 </head>
 <body>
-	<table border="0" cellpadding="0" cellspacing="0" width="100%">
-		<tbody>
-			<tr>
-				<td width="640">
-					<table border="0" cellpadding="0" cellspacing="0" width="640">
-						<tbody>
-							<tr>
-								<td width="640">
-									<div class="content-block">
-										<h1>Hi {{ $data['name'] }}, </h1>
-										
-										<p>Successfully submit your inquery. A supporting persion contact with within 24 hours.</p>
-											
-										<p><strong>Your submitted information below:</strong></p>
-										<p><strong>E-mail:</strong> {{ $data['email'] }}</p>
-										<p><strong>Your Message:</strong><br> {{ $data['message'] }}</p>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td height="40" width="640"> </td>
-							</tr>
-							<tr>
-								<td>
-									<p align="center">Thank you, <em>SportCity.com</em></p>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+  <div class="container">
+    <header>
+      <h1>SportCity</h1>
+    </header>
+
+    <div class="content">
+      <p>Hi,{{ $data['name'] }}</p>
+      <p>{{ $data['email'] }}</p>
+      <p>Get ready for an amazing fitness journey with SportCity! Our state-of-the-art facilities and expert trainers are here to help you achieve your fitness goals.</p>
+      <p>Here's what we offer:</p>
+      <ul>
+        <li>Modern workout equipment</li>
+        <li>Group fitness classes</li>
+        <li>Personalized training programs</li>
+        <li>And much more!</li>
+      </ul>
+      <p>Ready to take the first step? Join us today and start your fitness journey!</p>
+    </div>
+
+    <footer>
+      <p>Stay fit with SportCity</p>
+    </footer>
+  </div>
 </body>
 </html>
