@@ -16,9 +16,9 @@ class HomeController extends Controller
     public function create()
     {
         return Inertia::render('Welcome',[
-            'canLogin' => Route::has('login'),
+            'isLogin' =>  ['client' => auth()->guard('client')->check(),'coach' => auth()->guard('coach')->check(),'user' => auth()->guard('web')->check()],
             'gym' => Gym::select(['id','address','email','phone'])->where('id','1')->first(),
-            'plans' => Plan::all()
+            'plans' => Plan::with(['details'])->get(),
         ]);
     }
 

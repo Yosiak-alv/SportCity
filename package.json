@@ -21,6 +21,7 @@
         "@suadelabs/vue3-multiselect": "^1.0.2",
         "datatables.net-dt": "^1.13.5",
         "jquery": "^3.7.0",
-        "lodash": "^4.17.21"
+        "lodash": "^4.17.21",
+        "swiper": "^11.0.4"
     }
 }
