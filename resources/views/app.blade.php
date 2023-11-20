@@ -34,5 +34,12 @@
         html{
             scroll-behavior: smooth;
         }
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding-right: 0 !important; /* por el sweetAlert2 pone un padding */
+            overflow-x: clip;   /* esto lo soluciono ,para todos excepto firefox y sweetAlert lo pone cuando aparece*/
+        }
+
     </style>
 </html>
