@@ -17,14 +17,16 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
-
+let scrollPosition = 0; // Variable to store scroll position
 watch(
     () => props.show,
     () => {
         if (props.show) {
-            document.body.style.overflow = 'hidden';
+            scrollPosition = window.scrollY; // Store the current scroll position
+            //document.body.style.overflow = 'hidden'; comentado porque sino se hiba al tope de la pagina
         } else {
             document.body.style.overflow = null;
+            window.scrollTo(0, scrollPosition); // Restore the scroll position when the modal is closed
         }
     }
 );
