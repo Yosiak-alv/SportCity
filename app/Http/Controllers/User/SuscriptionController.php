@@ -10,7 +10,7 @@ use App\Traits\SuscriptionTrait;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\Controller;
-
+use Carbon\Carbon;
 class SuscriptionController extends Controller
 {
     use SuscriptionTrait;
@@ -47,8 +47,13 @@ class SuscriptionController extends Controller
      */
     public function store(CreateEditSuscription $request)
     {
-        $request->merge(['user_id' => request()->user()->id]);
-        $suscription = Suscription::create($request->validatedSuscription());
+        $attr = $request->validated();
+        $plan = Plan::find($attr['plan_id']);
+        $attr['user_id'] = request()->user()->id;
+        $attr['ends_at'] = $plan->duration == 'Month' ? Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString()
+        : Carbon::now()->addDay()->timezone('America/El_Salvador')->toDateTimeString();
+        $suscription = Suscription::create($attr);
+        
         return redirect()->route('suscriptions.show', $suscription->id)->with([
             'level' => 'success',
             'message' => 'Suscription Created Succesfully!'
@@ -82,8 +87,13 @@ class SuscriptionController extends Controller
      */
     public function update(CreateEditSuscription $request, Suscription $suscription)
     {
-        $request->merge(['user_id' => request()->user()->id]);
-        $suscription->update($request->validatedSuscription());
+        $attr = $request->validated();
+        $plan = Plan::find($attr['plan_id']);
+        $attr['user_id'] = request()->user()->id;
+        $attr['ends_at'] = $plan->duration == 'Month' ? Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString()
+        : Carbon::now()->addDay()->timezone('America/El_Salvador')->toDateTimeString();
+        $suscription->update($attr);
+        
         return redirect()->route('suscriptions.show', $suscription->id)->with([
             'level' => 'success',
             'message' => 'Suscription Updated Succesfully!'

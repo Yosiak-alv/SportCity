@@ -7,7 +7,7 @@ use App\Http\Requests\User\ClientCreateEditRequest;
 use App\Http\Requests\User\ClientSystemCreateEditRequest;
 use App\Http\Requests\User\ClientTrainingSessionCreateRequest;
 use App\Http\Requests\User\CreateClientPurchaseRequest;
-use App\Http\Requests\User\CreateEditSuscriptionClient;
+use App\Http\Requests\User\CreateEditSuscription;
 use App\Models\Gym;
 use App\Models\Plan;
 use App\Models\Product;
@@ -228,19 +228,15 @@ class UserClientController extends Controller
             'plans' => Plan::all(),
         ]);
     }
-    public function storeSuscription(CreateEditSuscriptionClient $request, Client $client)
+    public function storeSuscription(CreateEditSuscription $request, Client $client)
     {   
-        $request->merge([
-            'user_id' => request()->user()->id,
-            'ends_at' => Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString(),
-        ]);
-
-        Suscription::create([
-            'client_id' => $request['client_id'],
-            'plan_id' => $request['plan_id'],
-            'user_id' => $request['user_id'],
-            'ends_at' => $request['ends_at']
-        ]);
+        $attr = $request->validated();
+        $plan = Plan::find($attr['plan_id']);
+        $attr['user_id'] = request()->user()->id;
+        $attr['ends_at'] = $plan->duration == 'Month' ? Carbon::now()->addMonth()->timezone('America/El_Salvador')->toDateTimeString()
+        : Carbon::now()->addDay()->timezone('America/El_Salvador')->toDateTimeString();
+        
+        Suscription::create($attr);
  
         return redirect()->route('clients.show',$client->id)->with([
             'level' => 'success',

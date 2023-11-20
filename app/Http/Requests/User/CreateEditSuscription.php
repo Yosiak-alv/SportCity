@@ -24,7 +24,6 @@ class CreateEditSuscription extends FormRequest
         return [
             'client_id' => 'required|exists:clients,id',
             'plan_id' => 'required|exists:plans,id',
-            'ends_at' => 'required|date|after:today',
             'user_id' => 'numeric|gt:0|exists:users,id'
         ];
     }

@@ -27,7 +27,6 @@ const form = useForm({
     id: props.suscription?.id ?? '',
     client_id:props.suscription?.client_id ?? '',
     plan_id: props.suscription?.plan_id ?? '',
-    ends_at: props.suscription?.ends_at ?? '',
 });
 
 const store = () => {
@@ -80,19 +79,6 @@ const update = (id) => {
                                 </option>
                             </select>
                             <InputError class="mt-2" :message="form.errors.plan_id" />
-                        </div>
-                        
-                        <div class="mt-1">
-                            <InputLabel for="ends_at" value="Ends At:" />
-
-                            <input 
-                                id="attendance_date"
-                                v-model="form.ends_at"
-                                type="datetime-local"
-                                class="mt-1 block w-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                            >
-
-                            <InputError class="mt-2" :message="form.errors.ends_at" />
                         </div>
                     </div>
                     <div class="flex items-center gap-4 mt-4">
