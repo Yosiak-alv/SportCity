@@ -69,8 +69,20 @@ const getPermission = (data) => {
                         
                     <div class="col-span-2 ml-12">
                         <span class="inline text-5xl h-fit">{{plan.name}}</span>
-                        <div class="mt-2 text-lg">
-                            <span class="font-semibold">Price:</span> {{ plan.price }}
+                        <div class="mt-2 text-lg mb-2">
+                            <span class="font-semibold">Description:</span> {{ plan.description }}
+                            <br>
+                            <span class="font-semibold">Duration:</span> {{ plan.duration }}
+                        </div>
+                        <div>
+                            <span class="inline text-xl font-extrabold">Details:</span>
+                            <div class="overflow-y-auto" style="height: 12rem;">
+                                <div v-for="detail in plan.details">
+                                    <div class="mt-2 text-lg">
+                                        {{detail.detail}}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     

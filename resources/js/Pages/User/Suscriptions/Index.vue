@@ -237,6 +237,7 @@ onMounted(() => {
                                 <th scope="col" class="px-6 py-3">ID</th>
                                 <th scope="col" class="px-6 py-3">Name</th>
                                 <th scope="col" class="px-6 py-3">Price</th>
+                                <th scope="col" class="px-6 py-3">Duration</th>
                                 <th scope="col" class="px-6 py-3">Options</th>
                             </tr>
                         </thead>
@@ -250,6 +251,9 @@ onMounted(() => {
                                 </td>
                                 <td class="px-6 py-4 ">
                                     {{plan.price}}
+                                </td>
+                                <td class="px-6 py-4 ">
+                                    {{plan.duration}}
                                 </td>
                                 <td class="px-6 py-4 ">
                                     <div class="flex space-x-4">

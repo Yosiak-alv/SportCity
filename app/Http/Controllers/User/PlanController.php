@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Requests\User\CreateEditPlanRequest;
 use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -28,13 +29,11 @@ class PlanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateEditPlanRequest $request)
     {
-        $attr = $request->validate([
-            'name' => ['required','string','max:255',Rule::unique('plans','name')],
-            'price' => 'required|numeric|gt:0',
-        ]);
-        $plan = Plan::create($attr);
+        $request->validated();
+        $plan = Plan::create($request->validatedPlan());
+        $plan->details()->createMany($request->validated()['details']);
         return redirect()->route('plans.show', $plan->id)->with([
             'level' => 'success',
             'message' => 'Plan Created Succesfully!'
@@ -46,7 +45,7 @@ class PlanController extends Controller
      */
     public function show(Plan $plan)
     {
-        return Inertia::render('User/Suscriptions/Plans/Show',['plan'=> $plan]);
+        return Inertia::render('User/Suscriptions/Plans/Show',['plan'=> $plan->load('details')]);
     }
 
     /**
@@ -54,19 +53,21 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        return Inertia::render('User/Suscriptions/Plans/CreateEditPlan',['plan'=> $plan]);
+        return Inertia::render('User/Suscriptions/Plans/CreateEditPlan',['plan'=> $plan->load('details')]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Plan $plan)
+    public function update(CreateEditPlanRequest $request, Plan $plan)
     {
-        $attr = $request->validate([
-            'name' => ['required','string','max:255',Rule::unique('plans','name')->ignore($plan)],
-            'price' => 'required|numeric|gt:0',
-        ]);
-        $plan->update($attr);
+        $request->validated();
+        $plan->update($request->validatedPlan());
+
+        //delete all details and create new ones
+        $plan->details()->delete();
+        $plan->details()->createMany($request->validated()['details']);
+
         return redirect()->route('plans.show', $plan->id)->with([
             'level' => 'success',
             'message' => 'Plan Updated Succesfully!'
@@ -81,7 +82,7 @@ class PlanController extends Controller
         if($plan->suscriptions()->count() > 0){
             return back()->with([
                 'level' => 'danger',
-                'message' => 'Plan has suscriptions, please cancel them first!'
+                'message' => 'Plan has suscriptions, you can not delete it!'
             ]);
         }
         $plan->delete();
